@@ -44,6 +44,7 @@
   .stat.miss .n{color:var(--accent2)}
   .bar{width:180px;height:12px;background:var(--panel2);border-radius:8px;overflow:hidden;border:1px solid var(--line)}
   .bar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pulled),#2ecc71);transition:width .25s}
+  .pct{font-size:15px;font-weight:800;min-width:44px;text-align:right}
 
   .banner{padding:9px 16px;font-size:13px;font-weight:600;text-align:center;display:none}
   .banner.show{display:block}
@@ -72,6 +73,7 @@
 
   .row{background:var(--panel);border:1px solid var(--line);border-radius:14px;
     margin:6px 0;padding:10px;display:flex;align-items:center;gap:12px;transition:background .15s,border-color .15s}
+  .row.alt{background:#0d162f;border-color:#1f2a4d}
   .row .body{flex:1;min-width:0;cursor:pointer;display:flex;align-items:center;gap:12px}
   .thumb{flex:0 0 auto;width:52px;height:73px;border-radius:6px;background:var(--panel2);
     border:1px solid var(--line);object-fit:cover;display:block;cursor:zoom-in}
@@ -89,6 +91,9 @@
   .meta .sc{color:#cfd8ea;font-weight:800;letter-spacing:.4px}
   .meta i{color:#aeb9d1}
   .rar{display:inline-block;font-weight:800;font-size:11px;border:1px solid #4a5a85;border-radius:4px;padding:0 5px;margin:0 1px;vertical-align:1px}
+  .yr{color:#7f8db0}
+  .ctbig{display:inline-block;font-weight:900;font-size:13px;color:#ffb08a;border:2px solid #7d5b3a;
+    border-radius:5px;padding:0 6px;letter-spacing:.5px;vertical-align:1px}
   .rN{color:#cfd6e4} .rU{color:#a8c0d8} .rR{color:#e5c05a} .rM{color:#ef8352} .rS{color:#c79be0}
   .pm{font-size:12px;font-weight:700;margin-top:2px}
   .pm .pp{color:#7ee59b} .pm .mm{color:#ff9d8f}
@@ -145,7 +150,7 @@
 <header>
   <img class="logo" src="https://images.shadowpos.com/store_01kp8wykrne8g960nefcrxz8sw/collections/upload_2026-05-29T23-41-41-789Z.png" alt="Geary's Games" onerror="this.style.display='none'">
   <div>
-    <div class="brand"><span class="g">Geary's</span> Games — Pull Sheet</div>
+    <div class="brand">Pull Sheet</div>
     <div class="datebox" id="dateLabel">Loading…</div>
   </div>
   <div class="overall">
@@ -153,6 +158,7 @@
     <div class="stat miss"><div class="n" id="ovMissing">0</div><div class="l">Missing</div></div>
     <div class="stat"><div class="n" id="ovTotal">0</div><div class="l">Total</div></div>
     <div class="bar"><i id="ovBar"></i></div>
+    <div class="pct" id="ovPct">0%</div>
   </div>
 </header>
 
@@ -234,6 +240,28 @@ function todayStr(){
   return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 }
 
+/* ---------- set release years (card "year" field first, Scryfall as fallback) ---------- */
+let SETYEARS = {};
+function yearOf(c){ return c.year || SETYEARS[String(c.setcode||"").toUpperCase()] || ""; }
+async function loadSetYears(){
+  try{
+    const cached = JSON.parse(localStorage.getItem("gg_setyears")||"null");
+    if(cached && Date.now()-cached.t < 7*864e5 && cached.m){ SETYEARS = cached.m; return; }
+  }catch(e){}
+  try{
+    let url = "https://api.scryfall.com/sets";
+    const m = {};
+    while(url){
+      const r = await fetch(url); if(!r.ok) break;
+      const j = await r.json();
+      (j.data||[]).forEach(s=>{ if(s.released_at) m[String(s.code).toUpperCase()] = s.released_at.slice(0,4); });
+      url = j.has_more ? j.next_page : null;
+    }
+    if(Object.keys(m).length){ SETYEARS = m;
+      try{ localStorage.setItem("gg_setyears", JSON.stringify({t:Date.now(), m})); }catch(e){} }
+  }catch(e){}
+}
+
 /* ---------- image resolution: exact printing first ---------- */
 function scryUrl(sc, n, v){
   return "https://api.scryfall.com/cards/"+sc+"/"+encodeURIComponent(n)+"?format=image&version="+v;
@@ -273,6 +301,7 @@ function advanceImg(id, el){
 async function load(){
   const today = todayStr();
   let loaded = [], stale = [], errs = [];
+  const yearsP = loadSetYears();
   await Promise.all(CONFIG.SOURCES.map(async url => {
     try{
       const r = await fetch(url + "?t=" + Date.now(), {cache:"no-store"});
@@ -303,6 +332,7 @@ async function load(){
     $("#summary").textContent = "0 cards";
     return;
   }
+  await yearsP;   // set-year map (cached; harmless if it failed)
   render();
 }
 
@@ -371,7 +401,7 @@ function section(title, cards){
   h.className = "grouphdr";
   h.innerHTML = `<span>${title} — ${copies(cards)}</span><span class="rule"></span>`;
   listEl.appendChild(h);
-  cards.forEach(c => listEl.appendChild(rowEl(c)));
+  cards.forEach((c,i) => { const r = rowEl(c); if(i%2) r.classList.add("alt"); listEl.appendChild(r); });
 }
 
 function thumbHtml(c){
@@ -391,10 +421,12 @@ function rowEl(c){
   const row = document.createElement("div");
   row.className = "row" + (st!=="open" ? " "+st : "");
   const bits = [];
-  if(c.set || c.setcode) bits.push(`${c.setcode?`<span class="sc">${esc(c.setcode)}</span> `:""}<i>${esc(c.set||"")}</i>`);
+  const yr = yearOf(c);
+  if(c.set || c.setcode) bits.push(`${c.setcode?`<span class="sc">${esc(c.setcode)}</span> `:""}<i>${esc(c.set||"")}</i>${yr?` <span class="yr">(${esc(yr)})</span>`:""}`);
+  if(String(c.src).toUpperCase()==="CT") bits.push('<span class="ctbig">CT</span>');
   if(c.cond) bits.push(esc(c.cond));
   const rar = rarityHtml(c); if(rar) bits.push(rar);
-  bits.push("Ord "+esc(c.order||"?"));
+  bits.push("Cart "+esc(c.order||"?"));
   const prog = (q>1 && (m>0 || p>0))
     ? `<div class="pm">${p?`<span class="pp">${p} pulled</span>`:""}${p&&m?" · ":""}${m?`<span class="mm">${m} missing</span>`:""}${(p+m<q)?` · ${q-p-m} left`:""}</div>` : "";
   const pullLabel = ST[c._id].rp ? "✓ Pulled"+(m?` ×${q-m}`:"") : (m>0 && q>1 ? `Pull rest (${q-m})` : "Pull");
@@ -466,7 +498,9 @@ function updateTotals(){
   $("#ovPulled").textContent = pulled;
   $("#ovMissing").textContent = missing;
   $("#ovTotal").textContent = total;
-  $("#ovBar").style.width = total ? (done/total*100)+"%" : "0%";
+  const pct = total ? Math.round(done/total*100) : 0;
+  $("#ovBar").style.width = pct+"%";
+  $("#ovPct").textContent = pct+"%";
   $("#summary").innerHTML = `<b>${done}</b>/${total} done · <span class="m">${missing} missing</span> · ${remaining} remaining`;
   const btn = $("#submit");
   btn.disabled = done === 0;
@@ -490,11 +524,11 @@ $("#submit").onclick = () => {
   if(!missRows.length && !unRows.length){ ml.innerHTML = "<div>Everything pulled. Clean report.</div>"; }
   missRows.forEach(c=>{
     const m=missingOf(c), q=qtyOf(c);
-    ml.innerHTML += `<div>${m===q? m+"×" : m+" of "+q+"×"} ${esc(c.name)} — ${esc(c.set||"")} #${esc(c.num||"")}${isFoil(c)?" (FOIL)":""} · Ord ${esc(c.order||"?")} · <b>MISSING</b></div>`;
+    ml.innerHTML += `<div>${m===q? m+"×" : m+" of "+q+"×"} ${esc(c.name)} — ${esc(c.set||"")} #${esc(c.num||"")}${isFoil(c)?" (FOIL)":""} · Cart ${esc(c.order||"?")} · <b>MISSING</b></div>`;
   });
   unRows.forEach(c=>{
     const u=qtyOf(c)-doneOf(c), q=qtyOf(c);
-    ml.innerHTML += `<div>${u===q? u+"×" : u+" of "+q+"×"} ${esc(c.name)} — ${esc(c.set||"")} #${esc(c.num||"")}${isFoil(c)?" (FOIL)":""} · Ord ${esc(c.order||"?")} · <b>NOT PULLED</b></div>`;
+    ml.innerHTML += `<div>${u===q? u+"×" : u+" of "+q+"×"} ${esc(c.name)} — ${esc(c.set||"")} #${esc(c.num||"")}${isFoil(c)?" (FOIL)":""} · Cart ${esc(c.order||"?")} · <b>NOT PULLED</b></div>`;
   });
   $("#overlay").classList.add("show");
 };
