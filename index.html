@@ -573,6 +573,20 @@ function toast(msg, err){
   clearTimeout(toastT); toastT=setTimeout(()=>t.className="toast",4000);
 }
 
+/* ---- auto-refresh: reload at 4:00 AM daily, and whenever the iPad
+       wakes up on a new day (timers can sleep with the screen) ---- */
+const LOADED_DAY = todayStr();
+function msTo4am(){
+  const n = new Date(), t = new Date(n);
+  t.setHours(4,0,0,0);
+  if(t <= n) t.setDate(t.getDate()+1);
+  return t - n;
+}
+setTimeout(() => location.reload(), msTo4am());
+document.addEventListener("visibilitychange", () => {
+  if(document.visibilityState === "visible" && todayStr() !== LOADED_DAY) location.reload();
+});
+
 load();
 </script>
 </body>
