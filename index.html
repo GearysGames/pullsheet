@@ -260,16 +260,14 @@ function zoomSrc(c){
   }
   const ch = CHAINS[c._id]||[]; return ch[Math.min(IMGIDX[c._id]||0, ch.length-1)] || c.img || "";
 }
-/* one delegated error handler walks each thumb down its chain */
-document.addEventListener("error", function(e){
-  const el = e.target;
-  if(!(el instanceof HTMLImageElement) || !el.classList.contains("thumb")) return;
-  const id = +el.dataset.id, chain = CHAINS[id] || [];
-  let i = (IMGIDX[id]||0) + 1;
+/* walk a thumb down its fallback chain on load errors */
+function advanceImg(id, el){
+  const chain = CHAINS[id] || [];
+  const i = (IMGIDX[id]||0) + 1;
   IMGIDX[id] = i;
   if(i < chain.length){ el.src = chain[i]; }
-  else { el.classList.add("ph"); el.removeAttribute("src"); }
-}, true);
+  else { el.onerror = null; el.classList.add("ph"); el.removeAttribute("src"); }
+}
 
 /* ------------------------- data load ------------------------ */
 async function load(){
@@ -423,8 +421,9 @@ function rowEl(c){
   };
   row.querySelector(".pull").onclick = e => { e.stopPropagation(); pullTap(c); };
   row.querySelector(".miss").onclick = e => { e.stopPropagation(); missTap(c); };
-  /* mouse hover preview (desktop only) */
+  /* image fallback chain + mouse hover preview */
   const th = row.querySelector("img.thumb");
+  if(th){ th.onerror = () => advanceImg(c._id, th); }
   if(th && window.matchMedia("(hover:hover) and (pointer:fine)").matches){
     th.addEventListener("mouseenter", ev => showHover(c, ev));
     th.addEventListener("mousemove", ev => moveHover(ev));
