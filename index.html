@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Geary's Games — Daily Pull Sheet</title>
+<style>
+  :root{
+    --bg:#0f1216; --panel:#171b21; --panel2:#1f242c; --line:#2b323c;
+    --ink:#eef2f6; --muted:#9aa5b1; --accent:#e8b23a; --accent2:#f0c96b;
+    --pulled:#1f7a3d; --pulled-bg:#16351f; --missing:#c0392b; --missing-bg:#3a1714;
+    --foil:#8e7bd6; --tap:52px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-user-select:none;user-select:none;overscroll-behavior:none}
+  body{display:flex;flex-direction:column}
+
+  header{background:var(--panel);border-bottom:1px solid var(--line);
+    padding:calc(12px + env(safe-area-inset-top)) 18px 12px;
+    display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .brand{font-weight:800;font-size:20px;letter-spacing:.3px}
+  .brand .g{color:var(--accent)}
+  .datebox{color:var(--muted);font-size:14px}
+  .overall{margin-left:auto;display:flex;align-items:center;gap:14px}
+  .stat{text-align:center;line-height:1.1}
+  .stat .n{font-size:22px;font-weight:800}
+  .stat .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+  .stat.miss .n{color:var(--accent2)}
+  .bar{width:180px;height:12px;background:var(--panel2);border-radius:8px;overflow:hidden;border:1px solid var(--line)}
+  .bar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pulled),#2ecc71);transition:width .25s}
+
+  .banner{padding:9px 16px;font-size:13px;font-weight:600;text-align:center;display:none}
+  .banner.show{display:block}
+  .banner.warn{background:#3a2e14;color:#f0c96b;border-bottom:1px solid #6b5320}
+  .banner.err{background:#3a1714;color:#ffd7d1;border-bottom:1px solid #7d2b22}
+
+  nav{display:flex;gap:8px;padding:10px 14px;background:var(--panel);
+    border-bottom:1px solid var(--line);overflow-x:auto;flex-wrap:nowrap}
+  .tab{flex:0 0 auto;min-height:var(--tap);padding:8px 16px;border-radius:12px;
+    background:var(--panel2);border:1px solid var(--line);color:var(--ink);
+    font-size:16px;font-weight:700;display:flex;align-items:center;gap:9px;cursor:pointer}
+  .tab .pip{width:16px;height:16px;border-radius:50%;border:1px solid rgba(255,255,255,.25)}
+  .tab .cnt{font-size:12px;color:var(--muted);background:var(--bg);border-radius:20px;padding:2px 8px;min-width:30px;text-align:center}
+  .tab.active{border-color:var(--accent);box-shadow:0 0 0 2px rgba(232,178,58,.25) inset}
+  .tab.done .cnt{color:#7ee59b}
+  .c-W{background:#f7f2d8} .c-U{background:#3b7cc4} .c-B{background:#4b4b52}
+  .c-R{background:#c9432f} .c-G{background:#3f9a5b} .c-M{background:linear-gradient(135deg,#e8b23a,#c9432f,#3b7cc4)}
+  .c-L{background:#8a6a45} .c-BL{background:#c9b58a} .c-C{background:#b9bfc7}
+
+  main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:8px 12px 120px}
+  .msg{color:var(--muted);text-align:center;padding:60px 20px;font-size:16px;line-height:1.5}
+  .grouphdr{display:flex;align-items:center;gap:10px;margin:14px 4px 6px;color:var(--muted);
+    font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.6px}
+  .grouphdr.foil{color:var(--foil)}
+  .grouphdr .rule{flex:1;height:1px;background:var(--line)}
+
+  .row{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    margin:6px 0;padding:10px;display:flex;align-items:center;gap:12px;transition:background .15s,border-color .15s}
+  .row .body{flex:1;min-width:0;cursor:pointer;display:flex;align-items:center;gap:12px}
+  .thumb{flex:0 0 auto;width:52px;height:73px;border-radius:6px;background:var(--panel2);
+    border:1px solid var(--line);object-fit:cover;display:block}
+  .thumb.ph{display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--muted);text-align:center;padding:2px}
+  .qty{flex:0 0 auto;min-width:40px;height:40px;border-radius:9px;background:var(--panel2);
+    border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px}
+  .info{min-width:0}
+  .name{font-size:17px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .name .num{font-size:13px;color:var(--muted);font-weight:600}
+  .name .fo{display:inline-block;font-size:10px;font-weight:800;color:#1a1a1a;background:var(--foil);
+    border-radius:5px;padding:1px 5px;margin-left:6px;vertical-align:middle;letter-spacing:.5px}
+  .meta{font-size:13px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .meta b{color:#c7cf59;font-weight:700}
+  .tag{flex:0 0 auto;font-size:11px;font-weight:800;letter-spacing:.4px;padding:3px 8px;border-radius:6px;
+    border:1px solid var(--line);color:var(--muted);text-transform:uppercase}
+  .tag.SP{border-color:#3a5b7d;color:#8fb6dd} .tag.CT{border-color:#7d5b3a;color:#dda98f}
+
+  .actions{flex:0 0 auto;display:flex;gap:8px}
+  .btn{min-width:var(--tap);height:var(--tap);border-radius:12px;border:1px solid var(--line);
+    background:var(--panel2);color:var(--ink);font-size:14px;font-weight:800;padding:0 14px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center}
+  .btn.pull.on{background:var(--pulled);border-color:#2ecc71}
+  .btn.miss.on{background:var(--missing);border-color:#e74c3c}
+  .row.pulled{background:var(--pulled-bg);border-color:#276b3c}
+  .row.pulled .name{text-decoration:line-through;color:#bfe9cb}
+  .row.missing{background:var(--missing-bg);border-color:#7d2b22}
+  .row.missing .name{color:#f0b9b1}
+
+  footer{position:fixed;left:0;right:0;bottom:0;background:var(--panel);border-top:1px solid var(--line);
+    padding:12px 16px calc(12px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:14px}
+  .summary{color:var(--muted);font-size:14px}
+  .summary b{color:var(--ink)} .summary .m{color:var(--accent2)}
+  #submit{margin-left:auto;height:56px;padding:0 26px;border-radius:14px;border:none;
+    background:var(--accent);color:#1a1a1a;font-size:18px;font-weight:800;cursor:pointer}
+  #submit:disabled{opacity:.45} #submit.warn{background:var(--accent2)}
+
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:20px;z-index:50}
+  .overlay.show{display:flex}
+  .modal{background:var(--panel);border:1px solid var(--line);border-radius:18px;max-width:520px;width:100%;padding:22px}
+  .modal h2{margin:0 0 6px;font-size:22px}
+  .modal p{color:var(--muted);margin:6px 0 16px;line-height:1.4}
+  .modal .list{max-height:40vh;overflow:auto;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:16px}
+  .modal .list div{padding:6px 0;border-bottom:1px solid var(--line);font-size:15px}
+  .modal .list div:last-child{border-bottom:none}
+  .modal .btns{display:flex;gap:12px}
+  .modal button{flex:1;height:54px;border-radius:12px;font-size:17px;font-weight:800;cursor:pointer;border:1px solid var(--line)}
+  .modal .cancel{background:var(--panel2);color:var(--ink)}
+  .modal .confirm{background:var(--accent);color:#1a1a1a;border:none}
+  .toast{position:fixed;left:50%;top:24px;transform:translateX(-50%);background:#123d22;border:1px solid #2ecc71;
+    color:#d6ffe4;padding:14px 22px;border-radius:12px;font-weight:700;z-index:60;display:none}
+  .toast.show{display:block} .toast.err{background:#3a1714;border-color:#e74c3c;color:#ffd7d1}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="brand"><span class="g">Geary's</span> Games — Pull Sheet</div>
+    <div class="datebox" id="dateLabel">Loading…</div>
+  </div>
+  <div class="overall">
+    <div class="stat"><div class="n" id="ovPulled">0</div><div class="l">Pulled</div></div>
+    <div class="stat miss"><div class="n" id="ovMissing">0</div><div class="l">Missing</div></div>
+    <div class="stat"><div class="n" id="ovTotal">0</div><div class="l">Total</div></div>
+    <div class="bar"><i id="ovBar"></i></div>
+  </div>
+</header>
+
+<div class="banner" id="banner"></div>
+<nav id="tabs"></nav>
+<main id="list"><div class="msg">Loading today's orders…</div></main>
+
+<footer>
+  <div class="summary" id="summary">—</div>
+  <button id="submit" disabled>Submit Pull Report</button>
+</footer>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h2 id="mTitle">Submit report?</h2>
+    <p id="mSub"></p>
+    <div class="list" id="mList"></div>
+    <div class="btns">
+      <button class="cancel" id="mCancel">Keep pulling</button>
+      <button class="confirm" id="mConfirm">Send report</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   Geary's Games — interactive pull sheet (production shell)
+   Loads each day's data from data/sp.json (ShadowPOS) and
+   data/ct.json (CardTrader), merges the ones dated today, and
+   renders combined by color. Submit posts to the Apps Script.
+   The 3 AM generators only need to overwrite their own JSON.
+   ============================================================ */
+const CONFIG = {
+  STORE_NAME: "Geary's Games",
+  REPORT_ENDPOINT: "https://script.google.com/macros/s/AKfycbwDnGZHyvulmnxcOw6qif6lPtLD3u8cp0gy7esiiK-F1eMc73gasLxz9-O38cORQCMDqg/exec",
+  REPORT_TO: "ryan@gearysgames.com",
+  SOURCES: ["data/sp.json", "data/ct.json"],
+  REQUIRE_TODAY: true   // ignore a source file whose date != today
+};
+
+const COLORS = [
+  {k:"W",label:"White"},{k:"U",label:"Blue"},{k:"B",label:"Black"},
+  {k:"R",label:"Red"},{k:"G",label:"Green"},{k:"M",label:"Multi"},
+  {k:"L",label:"Land"},{k:"BL",label:"Basic Land"},{k:"C",label:"Colorless"}
+];
+
+const $ = s => document.querySelector(s);
+const tabsEl = $("#tabs"), listEl = $("#list"), bannerEl = $("#banner");
+const isFoil = c => String(c.finish||"").toUpperCase().includes("FOIL");
+let CARDS = [], state = {}, activeColor = null, sheetDate = null;
+
+function todayStr(){
+  const d = new Date();
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+
+async function load(){
+  const today = todayStr();
+  let loaded = [], stale = [], errs = [];
+  await Promise.all(CONFIG.SOURCES.map(async url => {
+    try{
+      const r = await fetch(url + "?t=" + Date.now(), {cache:"no-store"});
+      if(!r.ok){ if(r.status!==404) errs.push(url+" ("+r.status+")"); return; }
+      const j = await r.json();
+      if(CONFIG.REQUIRE_TODAY && j.date && j.date !== today){ stale.push((j.source||url)+" @ "+j.date); return; }
+      (j.cards||[]).forEach(c => { c.src = c.src || j.source || "?"; CARDS.push(c); });
+      loaded.push(j.source || url);
+      if(j.date) sheetDate = j.date;
+    }catch(e){ errs.push(url); }
+  }));
+
+  CARDS.forEach((c,i)=>{ c._id = i+1; state[c._id] = "unpulled"; });
+
+  // Banner for missing / stale sources
+  let notes = [];
+  if(stale.length) notes.push("Ignoring stale data: " + stale.join(", "));
+  if(errs.length) notes.push("Could not load: " + errs.join(", "));
+  if(notes.length){ bannerEl.textContent = notes.join(" · ");
+    bannerEl.className = "banner show " + (CARDS.length? "warn":"err"); }
+
+  const d = sheetDate ? new Date(sheetDate+"T00:00:00") : new Date();
+  $("#dateLabel").textContent = (isNaN(d)? (sheetDate||"") :
+    d.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric",year:"numeric"}))
+    + (loaded.length? "  ·  "+loaded.join(" + ") : "");
+
+  if(!CARDS.length){
+    listEl.innerHTML = `<div class="msg">No orders to pull right now.<br><span style="font-size:13px">If you expected cards, the morning job may not have published yet — pull to refresh.</span></div>`;
+    $("#summary").textContent = "0 cards";
+    return;
+  }
+  render();
+}
+
+function cardsFor(k){ return CARDS.filter(c => (c.color||"C") === k); }
+function resolved(k){ return cardsFor(k).filter(c => state[c._id] !== "unpulled").length; }
+
+function buildTabs(){
+  tabsEl.innerHTML = "";
+  const present = COLORS.filter(c => cardsFor(c.k).length > 0);
+  if(!activeColor && present.length) activeColor = present[0].k;
+  present.forEach(c => {
+    const total = cardsFor(c.k).length, done = resolved(c.k);
+    const t = document.createElement("div");
+    t.className = "tab" + (c.k===activeColor?" active":"") + (done===total?" done":"");
+    t.innerHTML = `<span class="pip c-${c.k}"></span>${c.label}<span class="cnt">${done}/${total}</span>`;
+    t.onclick = () => { activeColor = c.k; render(); };
+    tabsEl.appendChild(t);
+  });
+}
+
+function render(){
+  buildTabs();
+  const cards = cardsFor(activeColor);
+  listEl.innerHTML = "";
+  const foils = cards.filter(isFoil), nonfoils = cards.filter(c => !isFoil(c));
+  if(foils.length) section("✦ Foil", foils, true);
+  if(nonfoils.length) section("Non-Foil", nonfoils, false);
+  updateTotals();
+}
+
+function section(title, cards, foil){
+  const h = document.createElement("div");
+  h.className = "grouphdr" + (foil?" foil":"");
+  h.innerHTML = `<span>${title} — ${cards.length}</span><span class="rule"></span>`;
+  listEl.appendChild(h);
+  cards.forEach(c => listEl.appendChild(rowEl(c)));
+}
+
+function thumbHtml(c){
+  if(c.img) return `<img class="thumb" src="${esc(c.img)}" loading="lazy" onerror="this.classList.add('ph');this.removeAttribute('src');this.textContent='no img';">`;
+  return `<div class="thumb ph">no img</div>`;
+}
+
+function rowEl(c){
+  const st = state[c._id];
+  const row = document.createElement("div");
+  row.className = "row" + (st==="pulled"?" pulled":"") + (st==="missing"?" missing":"");
+  const bits = [];
+  if(c.set) bits.push(`<b>${esc((c.setcode?c.setcode+" ":"")+c.set)}</b>`);
+  if(c.cond) bits.push(esc(c.cond));
+  if(c.rarity) bits.push(esc(c.rarity));
+  bits.push("Ord "+esc(c.order||"?"));
+  row.innerHTML = `
+    <div class="body">
+      ${thumbHtml(c)}
+      <div class="qty">${c.qty||1}</div>
+      <div class="info">
+        <div class="name">${esc(c.name)} <span class="num">#${esc(c.num||"")}</span>${isFoil(c)?'<span class="fo">FOIL</span>':''}</div>
+        <div class="meta">${bits.join(" · ")}</div>
+      </div>
+    </div>
+    <div class="tag ${esc(c.src)}">${esc(c.src)}</div>
+    <div class="actions">
+      <button class="btn pull ${st==="pulled"?"on":""}">${st==="pulled"?"✓ Pulled":"Pull"}</button>
+      <button class="btn miss ${st==="missing"?"on":""}">Missing</button>
+    </div>`;
+  row.querySelector(".body").onclick = () => toggle(c._id,"pulled");
+  row.querySelector(".pull").onclick = e => { e.stopPropagation(); toggle(c._id,"pulled"); };
+  row.querySelector(".miss").onclick = e => { e.stopPropagation(); toggle(c._id,"missing"); };
+  return row;
+}
+
+function toggle(id, target){ state[id] = (state[id]===target) ? "unpulled" : target; render(); }
+
+function updateTotals(){
+  const total = CARDS.length;
+  const pulled = CARDS.filter(c=>state[c._id]==="pulled").length;
+  const missing = CARDS.filter(c=>state[c._id]==="missing").length;
+  const done = pulled + missing, remaining = total - done;
+  $("#ovPulled").textContent = pulled;
+  $("#ovMissing").textContent = missing;
+  $("#ovTotal").textContent = total;
+  $("#ovBar").style.width = total ? (done/total*100)+"%" : "0%";
+  $("#summary").innerHTML = `<b>${done}</b>/${total} done · <span class="m">${missing} missing</span> · ${remaining} remaining`;
+  const btn = $("#submit");
+  btn.disabled = done === 0;
+  btn.classList.toggle("warn", remaining>0 && done>0);
+  btn.textContent = remaining>0 ? "Submit (incomplete)" : "Submit Pull Report";
+}
+
+function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m])); }
+
+$("#submit").onclick = () => {
+  const missing = CARDS.filter(c=>state[c._id]==="missing");
+  const remaining = CARDS.filter(c=>state[c._id]==="unpulled");
+  $("#mTitle").textContent = missing.length ? `Report ${missing.length} missing card${missing.length>1?"s":""}?` : "No missing cards — submit clean?";
+  let sub = `Emails the report to ${CONFIG.REPORT_TO}.`;
+  if(remaining.length) sub += ` ${remaining.length} card(s) still unmarked will be listed as NOT PULLED.`;
+  $("#mSub").textContent = sub;
+  const ml = $("#mList"); ml.innerHTML = "";
+  const showList = missing.concat(remaining.map(c=>({...c,_unmarked:true})));
+  if(!showList.length){ ml.innerHTML = "<div>Everything pulled. Clean report.</div>"; }
+  showList.forEach(c=>{
+    const tag = c._unmarked ? "NOT PULLED" : "MISSING";
+    ml.innerHTML += `<div>${c.qty||1}× ${esc(c.name)} — ${esc(c.set)} #${esc(c.num||"")}${isFoil(c)?" (FOIL)":""} · Ord ${esc(c.order||"?")} · <b>${tag}</b></div>`;
+  });
+  $("#overlay").classList.add("show");
+};
+$("#mCancel").onclick = () => $("#overlay").classList.remove("show");
+$("#mConfirm").onclick = submitReport;
+
+function buildReport(){
+  const rows = CARDS.map(c=>({
+    name:c.name,num:c.num,set:c.set,setcode:c.setcode,cond:c.cond,finish:c.finish,
+    qty:c.qty,order:c.order,src:c.src,color:c.color,
+    status: state[c._id]==="pulled"?"PULLED":state[c._id]==="missing"?"MISSING":"NOT_PULLED"
+  }));
+  const missing = rows.filter(r=>r.status==="MISSING");
+  const notPulled = rows.filter(r=>r.status==="NOT_PULLED");
+  return {
+    store: CONFIG.STORE_NAME, date: sheetDate || todayStr(),
+    submittedAt: new Date().toISOString(), to: CONFIG.REPORT_TO,
+    totals: { total: rows.length, pulled: rows.filter(r=>r.status==="PULLED").length,
+              missing: missing.length, notPulled: notPulled.length },
+    missing, notPulled
+  };
+}
+
+function submitReport(){
+  const payload = buildReport();
+  $("#overlay").classList.remove("show");
+  toast("Sending report…");
+  fetch(CONFIG.REPORT_ENDPOINT, {
+    method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body: JSON.stringify(payload)
+  }).then(r=>{ if(r.ok) toast("Report sent to "+CONFIG.REPORT_TO+" ✓");
+    else toast("Send failed ("+r.status+"). Try again.", true);
+  }).catch(()=>{ toast("Network error — try again.", true);
+    console.log("PULL REPORT:", JSON.stringify(payload,null,2)); });
+}
+
+let toastT;
+function toast(msg, err){
+  const t=$("#toast"); t.textContent=msg; t.className="toast show"+(err?" err":"");
+  clearTimeout(toastT); toastT=setTimeout(()=>t.className="toast",4000);
+}
+
+load();
+</script>
+</body>
+</html>
