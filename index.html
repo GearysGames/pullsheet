@@ -81,15 +81,15 @@
   .qty{flex:0 0 auto;min-width:40px;height:40px;border-radius:9px;background:var(--panel2);
     border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px}
   .info{min-width:0}
-  .name{font-size:17px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .name .num{font-size:13px;color:var(--muted);font-weight:600}
+  .name{font-size:18px;font-weight:800;letter-spacing:.1px;color:#f2f5fc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .name .num{font-size:14px;color:#c3cde3;font-weight:700}
   .name .fo{display:inline-block;font-size:10px;font-weight:800;color:#1a1a1a;background:var(--foil);
     border-radius:5px;padding:1px 5px;margin-left:6px;vertical-align:middle;letter-spacing:.5px}
   .name .pn{display:inline-block;font-size:12px;font-weight:800;color:#fff;background:#0d1733;
     border:1px solid var(--accent);border-radius:6px;padding:1px 8px;margin-right:8px;vertical-align:1px}
-  .meta{font-size:13px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .meta .sc{color:#cfd8ea;font-weight:800;letter-spacing:.4px}
-  .meta i{color:#aeb9d1}
+  .meta{font-size:14px;color:#c6d0e6;font-weight:600;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .meta .sc{color:#eaf1ff;font-weight:800;letter-spacing:.4px}
+  .meta i{color:#c7d2e8;font-style:italic}
   .rar{display:inline-block;font-weight:800;font-size:11px;border:1px solid #4a5a85;border-radius:4px;padding:0 5px;margin:0 1px;vertical-align:1px}
   .yr{color:#7f8db0}
   .ctbig{display:inline-block;font-weight:900;font-size:13px;color:#ffb08a;border:2px solid #7d5b3a;
@@ -101,9 +101,9 @@
     border:1px solid var(--line);color:var(--muted);text-transform:uppercase}
   .tag.SP{border-color:#3a5b7d;color:#8fb6dd} .tag.CT{border-color:#7d5b3a;color:#dda98f}
 
-  .actions{flex:0 0 auto;display:flex;gap:8px}
-  .btn{min-width:var(--tap);height:var(--tap);border-radius:12px;border:1px solid var(--line);
-    background:var(--panel2);color:var(--ink);font-size:14px;font-weight:800;padding:0 14px;cursor:pointer;
+  .actions{flex:0 0 auto;display:flex;gap:10px}
+  .btn{min-width:132px;height:var(--tap);border-radius:12px;border:1px solid var(--line);
+    background:var(--panel2);color:var(--ink);font-size:16px;font-weight:800;padding:0 22px;cursor:pointer;
     display:flex;align-items:center;justify-content:center;white-space:nowrap}
   .btn.pull.on{background:var(--pulled);border-color:#2ecc71}
   .btn.miss.on{background:var(--missing);border-color:#e74c3c}
@@ -136,6 +136,30 @@
   .toast{position:fixed;left:50%;top:24px;transform:translateX(-50%);background:#123d22;border:1px solid #2ecc71;
     color:#d6ffe4;padding:14px 22px;border-radius:12px;font-weight:700;z-index:60;display:none}
   .toast.show{display:block} .toast.err{background:#3a1714;border-color:#e74c3c;color:#ffd7d1}
+
+  /* ---- submit celebration: confetti burst, then fade to starry night ---- */
+  #confetti{position:fixed;inset:0;z-index:80;pointer-events:none;display:none}
+  #confetti.show{display:block}
+  #doneOv{position:fixed;inset:0;z-index:75;display:flex;align-items:center;justify-content:center;
+    padding:34px;text-align:center;opacity:0;visibility:hidden;transition:opacity 1.2s ease;
+    background-color:#04060f;
+    background-image:
+      radial-gradient(circle at 50% 34%, rgba(60,90,170,.20), transparent 60%),
+      radial-gradient(1px 1px at 24px 40px, rgba(255,255,255,.55), transparent 45%),
+      radial-gradient(1.6px 1.6px at 130px 90px, rgba(255,255,255,.40), transparent 45%),
+      radial-gradient(1.2px 1.2px at 210px 50px, rgba(255,255,255,.50), transparent 45%),
+      radial-gradient(1px 1px at 80px 170px, rgba(255,255,255,.35), transparent 45%),
+      radial-gradient(1.8px 1.8px at 260px 150px, rgba(255,255,255,.45), transparent 45%),
+      radial-gradient(1px 1px at 320px 220px, rgba(255,255,255,.30), transparent 45%);
+    background-size:auto, 300px 240px,300px 240px,300px 240px,300px 240px,300px 240px,300px 240px}
+  #doneOv.show{opacity:1;visibility:visible}
+  .donecard{max-width:680px;animation:donein 1.2s ease both}
+  @keyframes donein{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
+  .donemsg{font-size:30px;font-weight:800;color:#eef2fb;line-height:1.35;margin:0 0 16px;
+    text-shadow:0 2px 24px rgba(0,0,0,.6)}
+  .donerock{font-size:52px;font-weight:900;letter-spacing:.5px;
+    color:var(--accent);text-shadow:0 0 34px rgba(232,98,26,.55)}
+  .donesub{margin-top:22px;font-size:15px;color:#9fb0d4;font-weight:600}
 
   /* card image zoom (tap) + hover preview (mouse) */
   #zoomOv{z-index:55;flex-direction:column;gap:12px;cursor:zoom-out}
@@ -185,6 +209,14 @@
 <div class="overlay" id="zoomOv"><img id="zoomImg" alt=""><div id="zoomCap"></div></div>
 <div id="hoverPrev"><img id="hoverImg" alt=""></div>
 <div class="toast" id="toast"></div>
+<canvas id="confetti"></canvas>
+<div id="doneOv">
+  <div class="donecard">
+    <div class="donemsg">The report has been submitted for today.</div>
+    <div class="donerock">You rock!</div>
+    <div class="donesub">Resets automatically overnight.</div>
+  </div>
+</div>
 
 <script>
 /* ============================================================
@@ -579,10 +611,42 @@ function submitReport(){
   fetch(CONFIG.REPORT_ENDPOINT, {
     method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"},
     body: JSON.stringify(payload)
-  }).then(r=>{ if(r.ok) toast("Report sent to "+CONFIG.REPORT_TO+" ✓");
+  }).then(r=>{ if(r.ok) celebrate();
     else toast("Send failed ("+r.status+"). Try again.", true);
   }).catch(()=>{ toast("Network error — try again.", true);
     console.log("PULL REPORT:", JSON.stringify(payload,null,2)); });
+}
+
+/* ---- celebration: confetti burst, then fade the whole UI to a starry night ---- */
+function celebrate(){
+  runConfetti(2800);
+  setTimeout(() => { $("#doneOv").classList.add("show"); }, 850);
+}
+let confRAF;
+function runConfetti(dur){
+  const cv = $("#confetti"); cv.classList.add("show");
+  const ctx = cv.getContext("2d");
+  const dpr = Math.min(window.devicePixelRatio||1, 2);
+  cv.width = innerWidth*dpr; cv.height = innerHeight*dpr; ctx.scale(dpr,dpr);
+  const W = innerWidth, H = innerHeight;
+  const colors = ["#e8621a","#f4925c","#16a34a","#2ecc71","#3b7cc4","#e8b23a","#c9432f","#ffffff","#8e7bd6"];
+  const P = [];
+  for(let i=0;i<180;i++){
+    P.push({ x:Math.random()*W, y:-20-Math.random()*H*0.6,
+      w:6+Math.random()*8, h:9+Math.random()*11, c:colors[i%colors.length],
+      vy:2.4+Math.random()*4.2, vx:-2.4+Math.random()*4.8,
+      rot:Math.random()*Math.PI, vr:-0.22+Math.random()*0.44 });
+  }
+  const start = performance.now();
+  (function frame(t){
+    const el = t - start;
+    ctx.clearRect(0,0,W,H);
+    P.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; p.vy+=0.06; p.rot+=p.vr;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+      ctx.fillStyle=p.c; ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h); ctx.restore(); });
+    if(el < dur) confRAF = requestAnimationFrame(frame);
+    else { ctx.clearRect(0,0,W,H); cv.classList.remove("show"); }
+  })(start);
 }
 
 let toastT;
