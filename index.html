@@ -188,10 +188,12 @@
 
 <script>
 /* ============================================================
-   Geary's Games — interactive pull sheet  (v2 · 2026-07-06)
+   Geary's Games — interactive pull sheet  (v3 · 2026-07-07)
    - nightsky theme + store logo
    - full set line: SETCODE, set name, condition, rarity badge
-   - per-copy missing: qty>1 rows can mark 1..N copies missing
+   - within each color/tier, sets order NEWEST-first by release date
+   - per-copy pull AND per-copy missing: a qty>1 row needs one tap per
+     copy for each (mirrored behavior); p+m never exceeds qty
    - thumbnails pinned by set code + collector number (exact
      printing), CDN product image first, name-lookup last resort
    - tap a thumbnail for a large view; mouse hover previews
@@ -243,6 +245,16 @@ function todayStr(){
 /* ---------- set release years (card "year" field first, Scryfall as fallback) ---------- */
 let SETYEARS = {};
 function yearOf(c){ return c.year || SETYEARS[String(c.setcode||"").toUpperCase()] || ""; }
+/* full release-date sort key (newest-first). Prefer the card's own
+   released_at (YYYY-MM-DD from the generator); fall back to the 4-digit
+   year, then the Scryfall set-year map, so cross-year ordering is always
+   correct even when a source only supplies a year. */
+function relKey(c){
+  const rd = String(c.released_at||"");
+  if(/^\d{4}-\d{2}-\d{2}/.test(rd)) return rd.slice(0,10);
+  const y = yearOf(c);
+  return y ? y+"-00-00" : "0000-00-00";
+}
 async function loadSetYears(){
   try{
     const cached = JSON.parse(localStorage.getItem("gg_setyears")||"null");
@@ -314,7 +326,7 @@ async function load(){
     }catch(e){ errs.push(url); }
   }));
 
-  CARDS.forEach((c,i)=>{ c._id = i+1; ST[c._id] = {m:0, rp:false}; CHAINS[c._id] = imgChain(c); IMGIDX[c._id] = 0; });
+  CARDS.forEach((c,i)=>{ c._id = i+1; ST[c._id] = {p:0, m:0}; CHAINS[c._id] = imgChain(c); IMGIDX[c._id] = 0; });
 
   let notes = [];
   if(stale.length) notes.push("Ignoring stale data: " + stale.join(", "));
@@ -336,25 +348,30 @@ async function load(){
   render();
 }
 
-/* --------------------- per-copy pull state ------------------ */
-function pulledOf(c){ const s=ST[c._id]; return s.rp ? qtyOf(c)-s.m : 0; }
+/* --------------------- per-copy pull state ------------------
+   Both Pull and Missing are per-copy: each tap marks ONE more copy.
+   p = copies pulled, m = copies missing, always p+m <= qty.
+   A qty>N row therefore needs N Pull taps to fully pull it (mirrors
+   how Missing is tapped one copy at a time). Each button cycles its
+   own counter within the room the other leaves, wrapping back to 0. */
+function pulledOf(c){ return ST[c._id].p; }
 function missingOf(c){ return ST[c._id].m; }
 function doneOf(c){ return pulledOf(c)+missingOf(c); }
 function rowState(c){
-  const q=qtyOf(c), m=missingOf(c), done=doneOf(c);
-  if(done>=q) return m===0 ? "pulled" : (m===q ? "missing" : "partial");
-  return m>0 ? "partial" : "open";
+  const q=qtyOf(c), m=missingOf(c), p=pulledOf(c), done=p+m;
+  if(done>=q) return m===0 ? "pulled" : (p===0 ? "missing" : "partial");
+  return (p>0||m>0) ? "partial" : "open";
 }
 function pullTap(c){
   const s=ST[c._id], q=qtyOf(c);
-  if(s.rp){ s.rp=false; }
-  else { if(s.m>=q) s.m=0; s.rp=true; }
+  if(q===1){ s.p = s.p?0:1; if(s.p) s.m=0; }
+  else { s.p = (s.p+1 > q - s.m) ? 0 : s.p+1; }
   render();
 }
 function missTap(c){
   const s=ST[c._id], q=qtyOf(c);
-  if(q===1){ s.m = s.m?0:1; if(s.m) s.rp=false; }
-  else { s.m = (s.m+1) % (q+1); }
+  if(q===1){ s.m = s.m?0:1; if(s.m) s.p=0; }
+  else { s.m = (s.m+1 > q - s.p) ? 0 : s.m+1; }
   render();
 }
 
@@ -385,6 +402,7 @@ function render(){
      (foils interleaved); pull numbers run continuously across the color */
   const sorted = [...cards].sort((a,b) =>
     tierOf(a)-tierOf(b) ||
+    relKey(b).localeCompare(relKey(a)) ||          // newest set first (by release date)
     String(a.setcode||"").localeCompare(String(b.setcode||"")) ||
     cnum(a)-cnum(b) ||
     String(a.name||"").localeCompare(String(b.name||"")));
@@ -429,7 +447,7 @@ function rowEl(c){
   bits.push("Cart "+esc(c.order||"?"));
   const prog = (q>1 && (m>0 || p>0))
     ? `<div class="pm">${p?`<span class="pp">${p} pulled</span>`:""}${p&&m?" · ":""}${m?`<span class="mm">${m} missing</span>`:""}${(p+m<q)?` · ${q-p-m} left`:""}</div>` : "";
-  const pullLabel = ST[c._id].rp ? "✓ Pulled"+(m?` ×${q-m}`:"") : (m>0 && q>1 ? `Pull rest (${q-m})` : "Pull");
+  const pullLabel = q===1 ? (p?"✓ Pulled":"Pull") : (p>=q-m && p>0 ? `✓ Pull ${p}/${q}` : `Pull ${p}/${q}`);
   const missLabel = q===1 ? (m?"✕ Missing":"Missing") : `Missing ${m}/${q}`;
   row.innerHTML = `
     <div class="body">
@@ -443,7 +461,7 @@ function rowEl(c){
     </div>
     <div class="tag ${esc(c.src)}">${esc(c.src)}</div>
     <div class="actions">
-      <button class="btn pull ${ST[c._id].rp?"on":""}">${pullLabel}</button>
+      <button class="btn pull ${p>0?"on":""}">${pullLabel}</button>
       <button class="btn miss ${m>0?"on":""}">${missLabel}</button>
     </div>`;
   row.querySelector(".body").onclick = (e) => {
