@@ -167,6 +167,18 @@
   #zoomCap{color:var(--ink);font-weight:700;font-size:16px;text-align:center}
   #hoverPrev{position:fixed;display:none;z-index:54;pointer-events:none}
   #hoverPrev img{width:300px;border-radius:14px;box-shadow:0 10px 44px rgba(0,0,0,.75);display:block;background:var(--panel2)}
+
+  /* double-faced cards: front shown by default; Flip button on hover */
+  .thumbwrap{position:relative;flex:0 0 auto}
+  .flipbtn{position:absolute;left:50%;bottom:4px;transform:translateX(-50%);
+    display:none;background:rgba(13,23,51,.92);border:1px solid var(--accent);color:#fff;
+    font-size:10px;font-weight:800;letter-spacing:.4px;border-radius:6px;padding:2px 7px;
+    cursor:pointer;z-index:3;text-transform:uppercase}
+  @media (hover:hover) and (pointer:fine){ .thumbwrap:hover .flipbtn{display:block} }
+  @media (hover:none){ .thumbwrap.dfc .flipbtn{display:block;opacity:.92} } /* iPad: always visible on DFCs */
+  #zoomFlip{display:none;height:44px;padding:0 22px;border-radius:10px;border:1px solid var(--accent);
+    background:rgba(13,23,51,.92);color:#fff;font-size:15px;font-weight:800;cursor:pointer}
+  #zoomFlip.show{display:block}
 </style>
 </head>
 <body>
@@ -206,7 +218,7 @@
     </div>
   </div>
 </div>
-<div class="overlay" id="zoomOv"><img id="zoomImg" alt=""><div id="zoomCap"></div></div>
+<div class="overlay" id="zoomOv"><img id="zoomImg" alt=""><div id="zoomCap"></div><button id="zoomFlip">⟳ Flip</button></div>
 <div id="hoverPrev"><img id="hoverImg" alt=""></div>
 <div class="toast" id="toast"></div>
 <canvas id="confetti"></canvas>
@@ -220,14 +232,18 @@
 
 <script>
 /* ============================================================
-   Geary's Games — interactive pull sheet  (v3 · 2026-07-07)
+   Geary's Games — interactive pull sheet  (v4 · 2026-07-15)
    - nightsky theme + store logo
    - full set line: SETCODE, set name, condition, rarity badge
    - within each color/tier, sets order NEWEST-first by release date
    - per-copy pull AND per-copy missing: a qty>1 row needs one tap per
      copy for each (mirrored behavior); p+m never exceeds qty
-   - thumbnails pinned by set code + collector number (exact
-     printing), CDN product image first, name-lookup last resort
+   - GUARANTEED thumbnails: CDN scan → img_scry (direct Scryfall URL
+     from the generator) → set+collector lookup → exact-name lookup;
+     the name lookup always resolves, so no card renders imageless
+   - double-faced cards always show the FRONT face; a Flip button
+     (hover-reveal on desktop, always visible on touch) toggles the
+     back face on the thumbnail, hover preview, and zoom view
    - tap a thumbnail for a large view; mouse hover previews
    Loads data/sp.json + data/ct.json (only files dated today),
    merges, renders by color. Submit posts to the Apps Script.
@@ -306,14 +322,29 @@ async function loadSetYears(){
   }catch(e){}
 }
 
-/* ---------- image resolution: exact printing first ---------- */
-function scryUrl(sc, n, v){
-  return "https://api.scryfall.com/cards/"+sc+"/"+encodeURIComponent(n)+"?format=image&version="+v;
+/* ---------- image resolution: exact printing first ----------
+   Chain (walked on load error, so an image ALWAYS renders):
+     1. generator CDN product image (CardTrader / ShadowPOS scan)
+     2. img_scry — direct Scryfall image URL published by the generator
+     3. Scryfall by set + collector number (exact printing)
+     4. Scryfall by exact name (any printing — guaranteed to exist)
+   Double-faced cards publish img_back; the FRONT face always shows
+   first, and a Flip button (hover on desktop, always-on for touch)
+   toggles to the back. */
+function scryUrl(sc, n, v, back){
+  return "https://api.scryfall.com/cards/"+sc+"/"+encodeURIComponent(n)+"?format=image&version="+v+(back?"&face=back":"");
+}
+function cleanName(c){
+  return String(c.name||"").split("(")[0].split("//")[0].trim();
+}
+function namedUrl(c, v){
+  return "https://api.scryfall.com/cards/named?exact="+encodeURIComponent(cleanName(c))+"&format=image&version="+v;
 }
 function imgChain(c){
   const a = [];
   const named = c.img && /\/cards\/named/.test(c.img);
   if(c.img && !named) a.push(c.img);                 // generator CDN product image = authoritative
+  if(c.img_scry && c.img_scry !== c.img) a.push(c.img_scry); // direct Scryfall URL from generator
   if(c.setcode && c.num){                            // pinned by set + collector = exact printing
     const sc = String(c.setcode).toLowerCase().trim();
     const raw = String(c.num).trim();
@@ -321,16 +352,30 @@ function imgChain(c){
     a.push(scryUrl(sc, stripped, "small"));
     if(stripped !== raw) a.push(scryUrl(sc, raw, "small"));
   }
-  if(named) a.push(c.img);                           // name-only lookup = last resort (arbitrary printing)
+  if(named) a.push(c.img);                           // name-only lookup provided by generator
+  a.push(namedUrl(c, "small"));                      // guaranteed last resort: exact-name lookup
   return a;
 }
-function zoomSrc(c){
+/* back-face source for double-faced cards (front is always the default) */
+function backSrc(c, v){
+  if(c.img_back) return c.img_back;
+  if(c.setcode && c.num){
+    const sc = String(c.setcode).toLowerCase().trim();
+    const n = String(c.num).trim().replace(/^0+(?=.)/,"");
+    return scryUrl(sc, n, v||"normal", true);
+  }
+  return "";
+}
+function isDfc(c){ return !!c.img_back; }
+const FLIP = {};   /* per-card: false = front (default), true = back */
+function zoomSrc(c, back){
+  if(back) return backSrc(c, "large");
   if(c.setcode && c.num){
     const sc = String(c.setcode).toLowerCase().trim();
     const n = String(c.num).trim().replace(/^0+(?=.)/,"");
     return scryUrl(sc, n, "large");
   }
-  const ch = CHAINS[c._id]||[]; return ch[Math.min(IMGIDX[c._id]||0, ch.length-1)] || c.img || "";
+  const ch = CHAINS[c._id]||[]; return ch[Math.min(IMGIDX[c._id]||0, ch.length-1)] || c.img || namedUrl(c,"large");
 }
 /* walk a thumb down its fallback chain on load errors */
 function advanceImg(id, el){
@@ -456,8 +501,10 @@ function section(title, cards){
 
 function thumbHtml(c){
   const chain = CHAINS[c._id]||[], i = IMGIDX[c._id]||0;
-  if(i < chain.length) return `<img class="thumb" data-id="${c._id}" src="${esc(chain[i])}" loading="lazy" alt="">`;
-  return `<div class="thumb ph">no img</div>`;
+  const flipped = isDfc(c) && FLIP[c._id];
+  const src = flipped ? backSrc(c, "small") : (i < chain.length ? chain[i] : namedUrl(c,"small"));
+  const flip = isDfc(c) ? `<button class="flipbtn" data-id="${c._id}">Flip</button>` : "";
+  return `<span class="thumbwrap${isDfc(c)?" dfc":""}"><img class="thumb" data-id="${c._id}" src="${esc(src)}" loading="lazy" alt="">${flip}</span>`;
 }
 
 function rarityHtml(c){
@@ -497,6 +544,7 @@ function rowEl(c){
       <button class="btn miss ${m>0?"on":""}">${missLabel}</button>
     </div>`;
   row.querySelector(".body").onclick = (e) => {
+    if(e.target.closest(".flipbtn")) return;         // handled below
     const th = e.target.closest(".thumb");
     if(th){ if(!th.classList.contains("ph")) openZoom(c); return; }
     pullTap(c);
@@ -505,7 +553,22 @@ function rowEl(c){
   row.querySelector(".miss").onclick = e => { e.stopPropagation(); missTap(c); };
   /* image fallback chain + mouse hover preview */
   const th = row.querySelector("img.thumb");
-  if(th){ th.onerror = () => advanceImg(c._id, th); }
+  if(th){ th.onerror = () => {
+    if(isDfc(c) && FLIP[c._id]){ FLIP[c._id] = false; th.onerror = null; th.src = (CHAINS[c._id]||[])[IMGIDX[c._id]||0] || namedUrl(c,"small"); }
+    else advanceImg(c._id, th);
+  }; }
+  /* Flip button: toggle front/back on double-faced cards */
+  const fb = row.querySelector(".flipbtn");
+  if(fb && th){
+    fb.onclick = e => {
+      e.stopPropagation();
+      FLIP[c._id] = !FLIP[c._id];
+      th.src = FLIP[c._id] ? backSrc(c, "small")
+        : ((CHAINS[c._id]||[])[Math.min(IMGIDX[c._id]||0,(CHAINS[c._id]||[]).length-1)] || namedUrl(c,"small"));
+      const hi = $("#hoverImg");
+      if($("#hoverPrev").style.display === "block") hi.src = zoomSrc(c, FLIP[c._id]);
+    };
+  }
   if(th && window.matchMedia("(hover:hover) and (pointer:fine)").matches){
     th.addEventListener("mouseenter", ev => showHover(c, ev));
     th.addEventListener("mousemove", ev => moveHover(ev));
@@ -515,18 +578,28 @@ function rowEl(c){
 }
 
 /* ------------------ zoom overlay + hover preview ------------- */
+let zoomCard = null, zoomBack = false;
 function openZoom(c){
   const ov = $("#zoomOv"), im = $("#zoomImg");
-  im.onerror = () => { const ch=CHAINS[c._id]||[]; const cur=ch[Math.min(IMGIDX[c._id]||0,ch.length-1)]; if(cur && im.src!==cur) im.src=cur; };
-  im.src = zoomSrc(c);
-  $("#zoomCap").textContent = c.name + (c.set ? " — " + c.set : "") + (c.num ? "  #" + c.num : "");
+  zoomCard = c; zoomBack = !!(isDfc(c) && FLIP[c._id]);
+  im.onerror = () => { const ch=CHAINS[c._id]||[]; const cur=ch[Math.min(IMGIDX[c._id]||0,ch.length-1)] || namedUrl(c,"large"); if(cur && im.src!==cur) im.src=cur; };
+  im.src = zoomSrc(c, zoomBack);
+  $("#zoomCap").textContent = c.name + (c.set ? " — " + c.set : "") + (c.num ? "  #" + c.num : "") + (zoomBack ? "  · back" : "");
+  $("#zoomFlip").classList.toggle("show", isDfc(c));
   ov.classList.add("show");
 }
 $("#zoomOv").onclick = () => $("#zoomOv").classList.remove("show");
+$("#zoomFlip").onclick = e => {
+  e.stopPropagation();
+  if(!zoomCard) return;
+  zoomBack = !zoomBack;
+  $("#zoomImg").src = zoomSrc(zoomCard, zoomBack);
+  $("#zoomCap").textContent = zoomCard.name + (zoomCard.set ? " — " + zoomCard.set : "") + (zoomCard.num ? "  #" + zoomCard.num : "") + (zoomBack ? "  · back" : "");
+};
 function showHover(c, ev){
   const hp = $("#hoverPrev"), im = $("#hoverImg");
-  im.onerror = () => { const ch=CHAINS[c._id]||[]; const cur=ch[Math.min(IMGIDX[c._id]||0,ch.length-1)]; if(cur && im.src!==cur) im.src=cur; };
-  im.src = zoomSrc(c);
+  im.onerror = () => { const ch=CHAINS[c._id]||[]; const cur=ch[Math.min(IMGIDX[c._id]||0,ch.length-1)] || namedUrl(c,"normal"); if(cur && im.src!==cur) im.src=cur; };
+  im.src = zoomSrc(c, isDfc(c) && FLIP[c._id]);
   hp.style.display = "block";
   moveHover(ev);
 }
