@@ -283,7 +283,7 @@ const tabsEl = $("#tabs"), listEl = $("#list"), bannerEl = $("#banner");
 const isFoil = c => String(c.finish||"").toUpperCase().includes("FOIL");
 const qtyOf = c => Math.max(1, parseInt(c.qty,10) || 1);
 let CARDS = [], ST = {}, activeColor = null, sheetDate = null;
-const IMGIDX = {}, CHAINS = {};
+const IMGIDX = {}, CHAINS = {}, DATA_SIG = {};
 
 function todayStr(){
   const d = new Date();
@@ -394,8 +394,9 @@ async function load(){
   await Promise.all(CONFIG.SOURCES.map(async url => {
     try{
       const r = await fetch(url + "?t=" + Date.now(), {cache:"no-store"});
-      if(!r.ok){ if(r.status!==404) errs.push(url+" ("+r.status+")"); return; }
+      if(!r.ok){ DATA_SIG[url] = "http:"+r.status; if(r.status!==404) errs.push(url+" ("+r.status+")"); return; }
       const j = await r.json();
+      DATA_SIG[url] = (j.date||"") + ":" + (j.cards||[]).length;
       if(CONFIG.REQUIRE_TODAY && j.date && j.date !== today){ stale.push((j.source||url)+" @ "+j.date); return; }
       (j.cards||[]).forEach(c => { c.src = c.src || j.source || "?"; CARDS.push(c); });
       loaded.push(j.source || url);
@@ -728,8 +729,15 @@ function toast(msg, err){
   clearTimeout(toastT); toastT=setTimeout(()=>t.className="toast",4000);
 }
 
-/* ---- auto-refresh: reload at 4:00 AM daily, and whenever the iPad
-       wakes up on a new day (timers can sleep with the screen) ---- */
+/* ---- auto-refresh ----
+   1. Hard reload at 4:00 AM daily, and whenever the iPad wakes up on a
+      new day (timers can sleep with the screen).
+   2. MID-DAY PUBLISHES (added 2026-07-17): poll the data files every
+      10 minutes — and on every wake — and compare against what was
+      loaded. If a source changed (e.g. a special CardTrader order was
+      published after the morning load): reload immediately when no pull
+      progress would be lost, otherwise show a tappable banner so staff
+      can refresh when ready. */
 const LOADED_DAY = todayStr();
 function msTo4am(){
   const n = new Date(), t = new Date(n);
@@ -738,8 +746,33 @@ function msTo4am(){
   return t - n;
 }
 setTimeout(() => location.reload(), msTo4am());
+let updatePromptShown = false;
+async function checkForUpdates(){
+  if(updatePromptShown) return;
+  const sigs = {};
+  await Promise.all(CONFIG.SOURCES.map(async url => {
+    try{
+      const r = await fetch(url + "?t=" + Date.now(), {cache:"no-store"});
+      if(!r.ok){ sigs[url] = "http:"+r.status; return; }
+      const j = await r.json();
+      sigs[url] = (j.date||"") + ":" + (j.cards||[]).length;
+    }catch(e){ sigs[url] = DATA_SIG[url]; } /* network hiccup: no change */
+  }));
+  const changed = CONFIG.SOURCES.some(u => sigs[u] !== undefined && DATA_SIG[u] !== undefined && sigs[u] !== DATA_SIG[u]);
+  if(!changed) return;
+  const progress = CARDS.reduce((n,c)=>n+doneOf(c),0);
+  if(progress === 0){ location.reload(); return; }
+  updatePromptShown = true;
+  bannerEl.innerHTML = "New cards were just published — <b>tap here to refresh</b> (your pull progress will reset)";
+  bannerEl.className = "banner show warn";
+  bannerEl.style.cursor = "pointer";
+  bannerEl.onclick = () => location.reload();
+}
+setInterval(checkForUpdates, 10*60*1000);
 document.addEventListener("visibilitychange", () => {
-  if(document.visibilityState === "visible" && todayStr() !== LOADED_DAY) location.reload();
+  if(document.visibilityState !== "visible") return;
+  if(todayStr() !== LOADED_DAY){ location.reload(); return; }
+  checkForUpdates();   /* same-day wake: catch mid-day publishes */
 });
 
 load();
