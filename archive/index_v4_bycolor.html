@@ -57,9 +57,6 @@
     background:var(--panel2);border:1px solid var(--line);color:var(--ink);
     font-size:16px;font-weight:700;display:flex;align-items:center;gap:9px;cursor:pointer}
   .tab .pip{width:16px;height:16px;border-radius:50%;border:1px solid rgba(255,255,255,.25)}
-  .tab .pipbox{min-width:28px;height:22px;border-radius:6px;background:var(--accent);color:#fff;
-    font-size:13px;font-weight:900;letter-spacing:.5px;display:flex;align-items:center;justify-content:center;padding:0 6px}
-  .tab .pipbox.z{background:#8e7bd6} .tab .pipbox.nb{background:#5a6579}
   .tab .cnt{font-size:12px;color:var(--muted);background:var(--bg);border-radius:20px;padding:2px 8px;min-width:30px;text-align:center}
   .tab.active{border-color:var(--accent);box-shadow:0 0 0 2px rgba(232,98,26,.35) inset}
   .tab.done .cnt{color:#7ee59b}
@@ -235,17 +232,7 @@
 
 <script>
 /* ============================================================
-   Geary's Games — interactive pull sheet  (v5 · 2026-08-01)
-   BY-BOX MODE: when cards carry a "box" field (from the Set →
-   Location Index), tabs are physical boxes (A1…A6, Z1…) in shelf
-   order, and within a box cards group by SET (chronological, the
-   way the Fortress boxes are packed) with collector-number order
-   inside each set. Specialty sets (Secret Lair / The List / MB)
-   sort by card name A–Z, matching their alphabetical filing.
-   Cards with no box land in a "No Box" tab at the end.
-   If NO card carries a box (old-format data), the page falls back
-   to the v4 color grouping automatically.
-   ------------------------------------------------------------
+   Geary's Games — interactive pull sheet  (v4 · 2026-07-15)
    - nightsky theme + store logo
    - full set line: SETCODE, set name, condition, rarity badge
    - within each color/tier, sets order NEWEST-first by release date
@@ -289,24 +276,6 @@ function tierOf(c){
   return 1;
 }
 function cnum(c){ return parseInt(String(c.num||"").replace(/\D/g,""),10) || 0; }
-
-/* ---------- BY-BOX mode helpers ---------- */
-const NOBOX = "—";
-let MODE = "color";               // "box" when any card carries a box field
-function boxOf(c){
-  const b = String(c.box||"").trim().toUpperCase();
-  return (!b || b === "-" || b === "UNASSIGNED") ? NOBOX : b;
-}
-/* shelf order: A1 < A2 < … < B1 < … < Z1; "No Box" last */
-function boxKey(b){
-  if(b === NOBOX) return "ZZZ~999";
-  const m = b.match(/^([A-Z]+)\s*(\d*)$/);
-  if(!m) return "ZZ~"+b;
-  return m[1].padStart(3," ") + "~" + String(parseInt(m[2]||"0",10)).padStart(3,"0");
-}
-/* specialty sets file alphabetically by card name inside their box */
-const ALPHA_SETS = ["SLD","SLU","SLC","PLST","ULST","LIST","MB2","CMB1","CMB2"];
-function isAlphaSet(c){ return ALPHA_SETS.includes(String(c.setcode||"").toUpperCase()); }
 const RARITY_NAMES = {N:"Common",U:"Uncommon",R:"Rare",M:"Mythic",S:"Special"};
 
 const $ = s => document.querySelector(s);
@@ -436,7 +405,6 @@ async function load(){
   }));
 
   CARDS.forEach((c,i)=>{ c._id = i+1; ST[c._id] = {p:0, m:0}; CHAINS[c._id] = imgChain(c); IMGIDX[c._id] = 0; });
-  MODE = CARDS.some(c => boxOf(c) !== NOBOX) ? "box" : "color";
 
   let notes = [];
   if(stale.length) notes.push("Ignoring stale data: " + stale.join(", "));
@@ -486,32 +454,19 @@ function missTap(c){
 }
 
 /* --------------------------- render -------------------------- */
-function cardsFor(k){
-  if(MODE === "box") return CARDS.filter(c => boxOf(c) === k);
-  return CARDS.filter(c => (c.color||"C") === k);
-}
+function cardsFor(k){ return CARDS.filter(c => (c.color||"C") === k); }
 function copies(cards){ return cards.reduce((n,c)=>n+qtyOf(c),0); }
 function doneCopies(cards){ return cards.reduce((n,c)=>n+doneOf(c),0); }
 
 function buildTabs(){
   tabsEl.innerHTML = "";
-  let present;
-  if(MODE === "box"){
-    const boxes = [...new Set(CARDS.map(boxOf))].sort((a,b)=>boxKey(a).localeCompare(boxKey(b)));
-    present = boxes.map(b => ({k:b, label: b===NOBOX ? "No Box" : "Box "+b, box:true}));
-  } else {
-    present = COLORS.filter(c => cardsFor(c.k).length > 0);
-  }
-  present = present.filter(c => cardsFor(c.k).length > 0);
-  if((!activeColor || !present.some(p=>p.k===activeColor)) && present.length) activeColor = present[0].k;
+  const present = COLORS.filter(c => cardsFor(c.k).length > 0);
+  if(!activeColor && present.length) activeColor = present[0].k;
   present.forEach(c => {
     const cs = cardsFor(c.k), total = copies(cs), done = doneCopies(cs);
     const t = document.createElement("div");
     t.className = "tab" + (c.k===activeColor?" active":"") + (done===total?" done":"");
-    const pip = c.box
-      ? `<span class="pipbox${c.k===NOBOX?" nb":(/^Z/.test(c.k)?" z":"")}">${c.k===NOBOX?"?":esc(c.k)}</span>`
-      : `<span class="pip c-${c.k}"></span>`;
-    t.innerHTML = `${pip}${esc(c.label)}<span class="cnt">${done}/${total}</span>`;
+    t.innerHTML = `<span class="pip c-${c.k}"></span>${c.label}<span class="cnt">${done}/${total}</span>`;
     t.onclick = () => { activeColor = c.k; render(); };
     tabsEl.appendChild(t);
   });
@@ -521,42 +476,19 @@ function render(){
   buildTabs();
   const cards = cardsFor(activeColor);
   listEl.innerHTML = "";
-  if(MODE === "box"){
-    /* physical shelf order: sets chronological (oldest → newest, the way
-       the Fortress boxes are packed), collector number inside each set;
-       specialty sets (Secret Lair / The List / MB) sort by name A–Z */
-    const sorted = [...cards].sort((a,b) =>
-      relKey(a).localeCompare(relKey(b)) ||          // oldest set first
-      String(a.setcode||"").localeCompare(String(b.setcode||"")) ||
-      (isAlphaSet(a)
-        ? String(a.name||"").localeCompare(String(b.name||""))
-        : (cnum(a)-cnum(b))) ||
-      String(a.name||"").localeCompare(String(b.name||"")));
-    sorted.forEach((c,i)=>{ c._pn = i+1; });
-    /* one section per SET, in encounter order */
-    const seen = [];
-    sorted.forEach(c => {
-      const key = String(c.setcode||c.set||"?").toUpperCase();
-      if(!seen.length || seen[seen.length-1].key !== key)
-        seen.push({key, code:c.setcode||"", set:c.set||"", yr:yearOf(c), cards:[]});
-      seen[seen.length-1].cards.push(c);
-    });
-    seen.forEach(g => section(
-      `${g.code?g.code+" · ":""}${g.set}${g.yr?" ("+g.yr+")":""}${isAlphaSet(g.cards[0])?" · A–Z":""}`, g.cards));
-  } else {
-    /* v4 color mode: tier, then newest set first, then collector number */
-    const sorted = [...cards].sort((a,b) =>
-      tierOf(a)-tierOf(b) ||
-      relKey(b).localeCompare(relKey(a)) ||
-      String(a.setcode||"").localeCompare(String(b.setcode||"")) ||
-      cnum(a)-cnum(b) ||
-      String(a.name||"").localeCompare(String(b.name||"")));
-    sorted.forEach((c,i)=>{ c._pn = i+1; });
-    TIERS.forEach(T => {
-      const g = sorted.filter(c => tierOf(c)===T.t);
-      if(g.length) section(T.label, g);
-    });
-  }
+  /* order like the printed sheet: tier, then set, then collector number
+     (foils interleaved); pull numbers run continuously across the color */
+  const sorted = [...cards].sort((a,b) =>
+    tierOf(a)-tierOf(b) ||
+    relKey(b).localeCompare(relKey(a)) ||          // newest set first (by release date)
+    String(a.setcode||"").localeCompare(String(b.setcode||"")) ||
+    cnum(a)-cnum(b) ||
+    String(a.name||"").localeCompare(String(b.name||"")));
+  sorted.forEach((c,i)=>{ c._pn = i+1; });
+  TIERS.forEach(T => {
+    const g = sorted.filter(c => tierOf(c)===T.t);
+    if(g.length) section(T.label, g);
+  });
   updateTotals();
 }
 
@@ -729,7 +661,7 @@ $("#mConfirm").onclick = submitReport;
 
 function buildReport(){
   const base = c => ({name:c.name,num:c.num,set:c.set,setcode:c.setcode,cond:c.cond,
-    finish:c.finish,order:c.order,src:c.src,color:c.color,box:boxOf(c),qtyOrdered:qtyOf(c)});
+    finish:c.finish,order:c.order,src:c.src,color:c.color,qtyOrdered:qtyOf(c)});
   const missing = [], notPulled = [];
   let pulled = 0, missCopies = 0, unCopies = 0;
   CARDS.forEach(c=>{
