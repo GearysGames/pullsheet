@@ -102,7 +102,7 @@
   .pm .pp{color:#7ee59b} .pm .mm{color:#ff9d8f}
   .tag{flex:0 0 auto;font-size:11px;font-weight:800;letter-spacing:.4px;padding:3px 8px;border-radius:6px;
     border:1px solid var(--line);color:var(--muted);text-transform:uppercase}
-  .tag.SP{border-color:#3a5b7d;color:#8fb6dd} .tag.CT{border-color:#7d5b3a;color:#dda98f}
+  .tag.SP,.tag.MP{border-color:#3a5b7d;color:#8fb6dd} .tag.CT{border-color:#7d5b3a;color:#dda98f} .tag.WEB{border-color:#4a4a55;color:#b9bfc7}
 
   .actions{flex:0 0 auto;display:flex;gap:10px}
   .btn{min-width:132px;height:var(--tap);border-radius:12px;border:1px solid var(--line);
@@ -399,14 +399,21 @@ function backSrc(c, v){
 }
 function isDfc(c){ return !!c.img_back; }
 const FLIP = {};   /* per-card: false = front (default), true = back */
+function upsizeUrl(u, v){
+  u = String(u||"");
+  if(/cards\.scryfall\.io/.test(u)) return u.replace(/\/(small|normal|large|png|border_crop)\//, "/"+v+"/");
+  if(/api\.scryfall\.com/.test(u)) return u.replace(/version=(small|normal|large)/, "version="+v);
+  return u; /* CDN product scans are already full-size */
+}
+/* v5.1 fix (2026-08-07): zoom/hover shows the SAME image the thumbnail
+   resolved to (upsized) — never a fresh set+num Scryfall guess, which
+   returned the WRONG card whenever num was an original-set/List number
+   or (bug of the day) a pull-sequence number. */
 function zoomSrc(c, back){
   if(back) return backSrc(c, "large");
-  if(c.setcode && c.num){
-    const sc = String(c.setcode).toLowerCase().trim();
-    const n = String(c.num).trim().replace(/^0+(?=.)/,"");
-    return scryUrl(sc, n, "large");
-  }
-  const ch = CHAINS[c._id]||[]; return ch[Math.min(IMGIDX[c._id]||0, ch.length-1)] || c.img || namedUrl(c,"large");
+  const ch = CHAINS[c._id]||[];
+  const cur = ch[Math.min(IMGIDX[c._id]||0, Math.max(ch.length-1,0))] || c.img || namedUrl(c,"large");
+  return upsizeUrl(cur, "large");
 }
 /* walk a thumb down its fallback chain on load errors */
 function advanceImg(id, el){
@@ -429,8 +436,8 @@ async function load(){
       const j = await r.json();
       DATA_SIG[url] = (j.date||"") + ":" + (j.cards||[]).length;
       if(CONFIG.REQUIRE_TODAY && j.date && j.date !== today){ stale.push((j.source||url)+" @ "+j.date); return; }
-      (j.cards||[]).forEach(c => { c.src = c.src || j.source || "?"; CARDS.push(c); });
-      loaded.push(j.source || url);
+      (j.cards||[]).forEach(c => { c.src = c.src || j.source || "?"; if(c.src === "SP") c.src = "MP"; CARDS.push(c); });
+      loaded.push(((j.source==="SP")?"MP":j.source) || url);
       if(j.date) sheetDate = j.date;
     }catch(e){ errs.push(url); }
   }));
@@ -525,8 +532,19 @@ function render(){
     /* physical shelf order: sets chronological (oldest → newest, the way
        the Fortress boxes are packed), collector number inside each set;
        specialty sets (Secret Lair / The List / MB) sort by name A–Z */
+    /* v5.1 fix (2026-08-07): sort by the SET's date (min released_at
+       across its cards), not each card's own — variant printings (LTR
+       surge-foil lands, released 2023-11 vs the set's 2023-06) were
+       splitting one set into two sections inside a box. */
+    const setDate = {};
+    cards.forEach(c => {
+      const k = String(c.setcode||c.set||"?").toUpperCase();
+      const d = relKey(c);
+      if(!(k in setDate) || d < setDate[k]) setDate[k] = d;
+    });
+    const skey = c => setDate[String(c.setcode||c.set||"?").toUpperCase()] || "0000-00-00";
     const sorted = [...cards].sort((a,b) =>
-      relKey(a).localeCompare(relKey(b)) ||          // oldest set first
+      skey(a).localeCompare(skey(b)) ||              // oldest set first
       String(a.setcode||"").localeCompare(String(b.setcode||"")) ||
       (isAlphaSet(a)
         ? String(a.name||"").localeCompare(String(b.name||""))
