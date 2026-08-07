@@ -6,37 +6,25 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Geary's Games — Daily Pull Sheet</title>
-<link rel="icon" href="https://images.shadowpos.com/store_01kp8wykrne8g960nefcrxz8sw/collections/upload_2026-05-29T23-41-41-789Z.png">
-<link rel="apple-touch-icon" href="https://images.shadowpos.com/store_01kp8wykrne8g960nefcrxz8sw/collections/upload_2026-05-29T23-41-41-789Z.png">
 <style>
-  /* ============ Geary's Games "nightsky" theme ============ */
   :root{
-    --bg:#0a0f23; --panel:#141f42; --panel2:#1b2d5e; --line:#26355f;
-    --ink:#e8ecf8; --muted:#93a0bd; --accent:#e8621a; --accent2:#f4925c;
-    --pulled:#16a34a; --pulled-bg:#0e2b1e; --missing:#c0392b; --missing-bg:#3a1714;
-    --partial-bg:#2e2410; --partial-line:#8a6a2a;
+    --bg:#0f1216; --panel:#171b21; --panel2:#1f242c; --line:#2b323c;
+    --ink:#eef2f6; --muted:#9aa5b1; --accent:#e8b23a; --accent2:#f0c96b;
+    --pulled:#1f7a3d; --pulled-bg:#16351f; --missing:#c0392b; --missing-bg:#3a1714;
     --foil:#8e7bd6; --tap:52px;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  html,body{margin:0;height:100%;color:var(--ink);
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     -webkit-user-select:none;user-select:none;overscroll-behavior:none}
-  body{display:flex;flex-direction:column;background-color:var(--bg);
-    background-image:
-      radial-gradient(1px 1px at 25px 35px, rgba(255,255,255,.40), transparent 45%),
-      radial-gradient(1px 1px at 130px 90px, rgba(255,255,255,.25), transparent 45%),
-      radial-gradient(1.5px 1.5px at 200px 40px, rgba(255,255,255,.35), transparent 45%),
-      radial-gradient(1px 1px at 70px 160px, rgba(255,255,255,.22), transparent 45%),
-      radial-gradient(1.2px 1.2px at 240px 140px, rgba(255,255,255,.30), transparent 45%);
-    background-size:280px 200px}
+  body{display:flex;flex-direction:column}
 
-  header{background:#0d1733;border-bottom:1px solid var(--line);
-    padding:calc(10px + env(safe-area-inset-top)) 18px 10px;
-    display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-  .logo{height:44px;width:auto;display:block}
-  .brand{font-weight:800;font-size:19px;letter-spacing:.3px;line-height:1.15}
+  header{background:var(--panel);border-bottom:1px solid var(--line);
+    padding:calc(12px + env(safe-area-inset-top)) 18px 12px;
+    display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .brand{font-weight:800;font-size:20px;letter-spacing:.3px}
   .brand .g{color:var(--accent)}
-  .datebox{color:var(--muted);font-size:13px}
+  .datebox{color:var(--muted);font-size:14px}
   .overall{margin-left:auto;display:flex;align-items:center;gap:14px}
   .stat{text-align:center;line-height:1.1}
   .stat .n{font-size:22px;font-weight:800}
@@ -44,25 +32,23 @@
   .stat.miss .n{color:var(--accent2)}
   .bar{width:180px;height:12px;background:var(--panel2);border-radius:8px;overflow:hidden;border:1px solid var(--line)}
   .bar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pulled),#2ecc71);transition:width .25s}
-  .pct{font-size:15px;font-weight:800;min-width:44px;text-align:right}
 
   .banner{padding:9px 16px;font-size:13px;font-weight:600;text-align:center;display:none}
   .banner.show{display:block}
   .banner.warn{background:#3a2e14;color:#f0c96b;border-bottom:1px solid #6b5320}
   .banner.err{background:#3a1714;color:#ffd7d1;border-bottom:1px solid #7d2b22}
 
-  nav{display:flex;gap:8px;padding:10px 14px;background:#0d1733;
+  nav{display:flex;gap:8px;padding:10px 14px;background:var(--panel);
     border-bottom:1px solid var(--line);overflow-x:auto;flex-wrap:nowrap}
   .tab{flex:0 0 auto;min-height:var(--tap);padding:8px 16px;border-radius:12px;
     background:var(--panel2);border:1px solid var(--line);color:var(--ink);
     font-size:16px;font-weight:700;display:flex;align-items:center;gap:9px;cursor:pointer}
-  .tab .pip{width:16px;height:16px;border-radius:50%;border:1px solid rgba(255,255,255,.25)}
-  .tab .pipbox{min-width:28px;height:22px;border-radius:6px;background:var(--accent);color:#fff;
-    font-size:13px;font-weight:900;letter-spacing:.5px;display:flex;align-items:center;justify-content:center;padding:0 6px}
-  .tab .pipbox.z{background:#8e7bd6} .tab .pipbox.nb{background:#5a6579}
+  .tab .box{font-size:12px;font-weight:800;background:var(--bg);border:1px solid var(--line);
+    border-radius:6px;padding:2px 7px;color:var(--accent2);letter-spacing:.5px}
   .tab .cnt{font-size:12px;color:var(--muted);background:var(--bg);border-radius:20px;padding:2px 8px;min-width:30px;text-align:center}
-  .tab.active{border-color:var(--accent);box-shadow:0 0 0 2px rgba(232,98,26,.35) inset}
+  .tab.active{border-color:var(--accent);box-shadow:0 0 0 2px rgba(232,178,58,.25) inset}
   .tab.done .cnt{color:#7ee59b}
+  .pip{display:inline-block;width:12px;height:12px;border-radius:50%;border:1px solid rgba(255,255,255,.25);vertical-align:-1px;margin-right:6px}
   .c-W{background:#f7f2d8} .c-U{background:#3b7cc4} .c-B{background:#4b4b52}
   .c-R{background:#c9432f} .c-G{background:#3f9a5b} .c-M{background:linear-gradient(135deg,#e8b23a,#c9432f,#3b7cc4)}
   .c-L{background:#8a6a45} .c-BL{background:#c9b58a} .c-C{background:#b9bfc7}
@@ -71,60 +57,53 @@
   .msg{color:var(--muted);text-align:center;padding:60px 20px;font-size:16px;line-height:1.5}
   .grouphdr{display:flex;align-items:center;gap:10px;margin:14px 4px 6px;color:var(--muted);
     font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.6px}
-  .grouphdr.foil{color:var(--foil)}
   .grouphdr .rule{flex:1;height:1px;background:var(--line)}
 
   .row{background:var(--panel);border:1px solid var(--line);border-radius:14px;
     margin:6px 0;padding:10px;display:flex;align-items:center;gap:12px;transition:background .15s,border-color .15s}
-  .row.alt{background:#2a3d6e;border-color:#3d5390}
   .row .body{flex:1;min-width:0;cursor:pointer;display:flex;align-items:center;gap:12px}
-  .thumb{flex:0 0 auto;width:52px;height:73px;border-radius:6px;background:var(--panel2);
-    border:1px solid var(--line);object-fit:cover;display:block;cursor:zoom-in}
-  .thumb.ph{display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--muted);text-align:center;padding:2px;cursor:default}
+  .thumbwrap{position:relative;flex:0 0 auto}
+  .thumb{width:52px;height:73px;border-radius:6px;background:var(--panel2);
+    border:1px solid var(--line);object-fit:cover;display:block}
+  .thumb.ph{display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--muted);text-align:center;padding:2px}
+  .flip{position:absolute;left:0;right:0;bottom:-1px;height:18px;border:none;border-radius:0 0 6px 6px;
+    background:rgba(0,0,0,.72);color:#fff;font-size:9px;font-weight:800;letter-spacing:.5px;cursor:pointer}
   .qty{flex:0 0 auto;min-width:40px;height:40px;border-radius:9px;background:var(--panel2);
     border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px}
   .info{min-width:0}
-  .name{font-size:18px;font-weight:800;letter-spacing:.1px;color:#f2f5fc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .name .num{font-size:14px;color:#c3cde3;font-weight:700}
+  .name{font-size:17px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .name .num{font-size:13px;color:var(--muted);font-weight:600}
   .name .fo{display:inline-block;font-size:10px;font-weight:800;color:#1a1a1a;background:var(--foil);
     border-radius:5px;padding:1px 5px;margin-left:6px;vertical-align:middle;letter-spacing:.5px}
-  .name .pn{display:inline-block;font-size:12px;font-weight:800;color:#fff;background:#0d1733;
-    border:1px solid var(--accent);border-radius:6px;padding:1px 8px;margin-right:8px;vertical-align:1px}
-  .meta{font-size:14px;color:#c6d0e6;font-weight:600;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .meta .sc{color:#eaf1ff;font-weight:800;letter-spacing:.4px}
-  .meta i{color:#c7d2e8;font-style:italic}
-  .rar{display:inline-block;font-weight:800;font-size:11px;border:1px solid #4a5a85;border-radius:4px;padding:0 5px;margin:0 1px;vertical-align:1px}
-  .yr{color:#7f8db0}
-  .ctbig{display:inline-block;font-weight:900;font-size:13px;color:#ffb08a;border:2px solid #7d5b3a;
-    border-radius:5px;padding:0 6px;letter-spacing:.5px;vertical-align:1px}
-  .rN{color:#cfd6e4} .rU{color:#a8c0d8} .rR{color:#e5c05a} .rM{color:#ef8352} .rS{color:#c79be0}
-  .pm{font-size:12px;font-weight:700;margin-top:2px}
-  .pm .pp{color:#7ee59b} .pm .mm{color:#ff9d8f}
+  .meta{font-size:13px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .meta b{color:#c7cf59;font-weight:700}
+  .meta .yr{color:var(--muted);font-weight:400}
   .tag{flex:0 0 auto;font-size:11px;font-weight:800;letter-spacing:.4px;padding:3px 8px;border-radius:6px;
     border:1px solid var(--line);color:var(--muted);text-transform:uppercase}
-  .tag.SP{border-color:#3a5b7d;color:#8fb6dd} .tag.CT{border-color:#7d5b3a;color:#dda98f}
+  .tag.SP{display:none} .tag.CT{display:block;border-color:#7d5b3a;color:#dda98f}
 
-  .actions{flex:0 0 auto;display:flex;gap:10px}
-  .btn{min-width:132px;height:var(--tap);border-radius:12px;border:1px solid var(--line);
-    background:var(--panel2);color:var(--ink);font-size:16px;font-weight:800;padding:0 22px;cursor:pointer;
-    display:flex;align-items:center;justify-content:center;white-space:nowrap}
+  .actions{flex:0 0 auto;display:flex;gap:8px}
+  .btn{min-width:var(--tap);height:var(--tap);border-radius:12px;border:1px solid var(--line);
+    background:var(--panel2);color:var(--ink);font-size:14px;font-weight:800;padding:0 14px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center}
   .btn.pull.on{background:var(--pulled);border-color:#2ecc71}
+  .btn.pull.part{border-color:#2ecc71}
   .btn.miss.on{background:var(--missing);border-color:#e74c3c}
+  .btn.miss.part{border-color:#e74c3c}
   .row.pulled{background:var(--pulled-bg);border-color:#276b3c}
   .row.pulled .name{text-decoration:line-through;color:#bfe9cb}
   .row.missing{background:var(--missing-bg);border-color:#7d2b22}
   .row.missing .name{color:#f0b9b1}
-  .row.partial{background:var(--partial-bg);border-color:var(--partial-line)}
 
-  footer{position:fixed;left:0;right:0;bottom:0;background:#0d1733;border-top:1px solid var(--line);
-    padding:12px 16px calc(12px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:14px;z-index:20}
+  footer{position:fixed;left:0;right:0;bottom:0;background:var(--panel);border-top:1px solid var(--line);
+    padding:12px 16px calc(12px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:14px}
   .summary{color:var(--muted);font-size:14px}
   .summary b{color:var(--ink)} .summary .m{color:var(--accent2)}
   #submit{margin-left:auto;height:56px;padding:0 26px;border-radius:14px;border:none;
-    background:var(--accent);color:#fff;font-size:18px;font-weight:800;cursor:pointer}
-  #submit:disabled{opacity:.45} #submit.warn{background:#b34d15}
+    background:var(--accent);color:#1a1a1a;font-size:18px;font-weight:800;cursor:pointer}
+  #submit:disabled{opacity:.45} #submit.warn{background:var(--accent2)}
 
-  .overlay{position:fixed;inset:0;background:rgba(4,7,18,.72);display:none;align-items:center;justify-content:center;padding:20px;z-index:50}
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:20px;z-index:50}
   .overlay.show{display:flex}
   .modal{background:var(--panel);border:1px solid var(--line);border-radius:18px;max-width:520px;width:100%;padding:22px}
   .modal h2{margin:0 0 6px;font-size:22px}
@@ -135,61 +114,17 @@
   .modal .btns{display:flex;gap:12px}
   .modal button{flex:1;height:54px;border-radius:12px;font-size:17px;font-weight:800;cursor:pointer;border:1px solid var(--line)}
   .modal .cancel{background:var(--panel2);color:var(--ink)}
-  .modal .confirm{background:var(--accent);color:#fff;border:none}
+  .modal .confirm{background:var(--accent);color:#1a1a1a;border:none}
   .toast{position:fixed;left:50%;top:24px;transform:translateX(-50%);background:#123d22;border:1px solid #2ecc71;
     color:#d6ffe4;padding:14px 22px;border-radius:12px;font-weight:700;z-index:60;display:none}
   .toast.show{display:block} .toast.err{background:#3a1714;border-color:#e74c3c;color:#ffd7d1}
-
-  /* ---- submit celebration: confetti burst, then fade to starry night ---- */
-  #confetti{position:fixed;inset:0;z-index:80;pointer-events:none;display:none}
-  #confetti.show{display:block}
-  #doneOv{position:fixed;inset:0;z-index:75;display:flex;align-items:center;justify-content:center;
-    padding:34px;text-align:center;opacity:0;visibility:hidden;transition:opacity 1.2s ease;
-    background-color:#04060f;
-    background-image:
-      radial-gradient(circle at 50% 34%, rgba(60,90,170,.20), transparent 60%),
-      radial-gradient(1px 1px at 24px 40px, rgba(255,255,255,.55), transparent 45%),
-      radial-gradient(1.6px 1.6px at 130px 90px, rgba(255,255,255,.40), transparent 45%),
-      radial-gradient(1.2px 1.2px at 210px 50px, rgba(255,255,255,.50), transparent 45%),
-      radial-gradient(1px 1px at 80px 170px, rgba(255,255,255,.35), transparent 45%),
-      radial-gradient(1.8px 1.8px at 260px 150px, rgba(255,255,255,.45), transparent 45%),
-      radial-gradient(1px 1px at 320px 220px, rgba(255,255,255,.30), transparent 45%);
-    background-size:auto, 300px 240px,300px 240px,300px 240px,300px 240px,300px 240px,300px 240px}
-  #doneOv.show{opacity:1;visibility:visible}
-  .donecard{max-width:680px;animation:donein 1.2s ease both}
-  @keyframes donein{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
-  .donemsg{font-size:30px;font-weight:800;color:#eef2fb;line-height:1.35;margin:0 0 16px;
-    text-shadow:0 2px 24px rgba(0,0,0,.6)}
-  .donerock{font-size:52px;font-weight:900;letter-spacing:.5px;
-    color:var(--accent);text-shadow:0 0 34px rgba(232,98,26,.55)}
-  .donesub{margin-top:22px;font-size:15px;color:#9fb0d4;font-weight:600}
-
-  /* card image zoom (tap) + hover preview (mouse) */
-  #zoomOv{z-index:55;flex-direction:column;gap:12px;cursor:zoom-out}
-  #zoomOv img{max-width:min(92vw,480px);max-height:78vh;border-radius:18px;box-shadow:0 12px 60px rgba(0,0,0,.7)}
-  #zoomCap{color:var(--ink);font-weight:700;font-size:16px;text-align:center}
-  #hoverPrev{position:fixed;display:none;z-index:54;pointer-events:none}
-  #hoverPrev img{width:300px;border-radius:14px;box-shadow:0 10px 44px rgba(0,0,0,.75);display:block;background:var(--panel2)}
-
-  /* double-faced cards: front shown by default; Flip button on hover */
-  .thumbwrap{position:relative;flex:0 0 auto}
-  .flipbtn{position:absolute;left:50%;bottom:4px;transform:translateX(-50%);
-    display:none;background:rgba(13,23,51,.92);border:1px solid var(--accent);color:#fff;
-    font-size:10px;font-weight:800;letter-spacing:.4px;border-radius:6px;padding:2px 7px;
-    cursor:pointer;z-index:3;text-transform:uppercase}
-  @media (hover:hover) and (pointer:fine){ .thumbwrap:hover .flipbtn{display:block} }
-  @media (hover:none){ .thumbwrap.dfc .flipbtn{display:block;opacity:.92} } /* iPad: always visible on DFCs */
-  #zoomFlip{display:none;height:44px;padding:0 22px;border-radius:10px;border:1px solid var(--accent);
-    background:rgba(13,23,51,.92);color:#fff;font-size:15px;font-weight:800;cursor:pointer}
-  #zoomFlip.show{display:block}
 </style>
 </head>
 <body>
 
 <header>
-  <img class="logo" src="https://images.shadowpos.com/store_01kp8wykrne8g960nefcrxz8sw/collections/upload_2026-05-29T23-41-41-789Z.png" alt="Geary's Games" onerror="this.style.display='none'">
   <div>
-    <div class="brand">Pull Sheet</div>
+    <div class="brand"><span class="g">Geary's</span> Games — Pull Sheet</div>
     <div class="datebox" id="dateLabel">Loading…</div>
   </div>
   <div class="overall">
@@ -197,7 +132,6 @@
     <div class="stat miss"><div class="n" id="ovMissing">0</div><div class="l">Missing</div></div>
     <div class="stat"><div class="n" id="ovTotal">0</div><div class="l">Total</div></div>
     <div class="bar"><i id="ovBar"></i></div>
-    <div class="pct" id="ovPct">0%</div>
   </div>
 </header>
 
@@ -221,213 +155,77 @@
     </div>
   </div>
 </div>
-<div class="overlay" id="zoomOv"><img id="zoomImg" alt=""><div id="zoomCap"></div><button id="zoomFlip">⟳ Flip</button></div>
-<div id="hoverPrev"><img id="hoverImg" alt=""></div>
 <div class="toast" id="toast"></div>
-<canvas id="confetti"></canvas>
-<div id="doneOv">
-  <div class="donecard">
-    <div class="donemsg">The report has been submitted for today.</div>
-    <div class="donerock">You rock!</div>
-    <div class="donesub">Resets automatically overnight.</div>
-  </div>
-</div>
 
 <script>
 /* ============================================================
-   Geary's Games — interactive pull sheet  (v5 · 2026-08-01)
-   BY-BOX MODE: when cards carry a "box" field (from the Set →
-   Location Index), tabs are physical boxes (A1…A6, Z1…) in shelf
-   order, and within a box cards group by SET (chronological, the
-   way the Fortress boxes are packed) with collector-number order
-   inside each set. Specialty sets (Secret Lair / The List / MB)
-   sort by card name A–Z, matching their alphabetical filing.
-   Cards with no box land in a "No Box" tab at the end.
-   If NO card carries a box (old-format data), the page falls back
-   to the v4 color grouping automatically.
-   ------------------------------------------------------------
-   - nightsky theme + store logo
-   - full set line: SETCODE, set name, condition, rarity badge
-   - within each color/tier, sets order NEWEST-first by release date
-   - per-copy pull AND per-copy missing: a qty>1 row needs one tap per
-     copy for each (mirrored behavior); p+m never exceeds qty
-   - GUARANTEED thumbnails: CDN scan → img_scry (direct Scryfall URL
-     from the generator) → set+collector lookup → exact-name lookup;
-     the name lookup always resolves, so no card renders imageless
-   - double-faced cards always show the FRONT face; a Flip button
-     (hover-reveal on desktop, always visible on touch) toggles the
-     back face on the thumbnail, hover preview, and zoom view
-   - tap a thumbnail for a large view; mouse hover previews
-   Loads data/sp.json + data/ct.json (only files dated today),
-   merges, renders by color. Submit posts to the Apps Script.
+   Geary's Games — interactive pull sheet
+   v5 (2026-08-07): GROUPED BY INVENTORY BOX.
+   - Tabs are Fortress box locations (A1…A6, Z1, …) from each
+     card's `box` field (published by nightly-pullsheet-by-box).
+     Cards without a box land in "No Box" (last tab).
+   - Within a box, cards sort in SHELF ORDER: set release date
+     ascending (oldest first), then collector number. Z1
+     (specialty) sorts by set code then name.
+   - Per-copy Pull/Missing: a qty-3 row takes three taps (tap a
+     completed state again to reset it). Counts are in copies.
+   - Guaranteed thumbnail chain: img → img_scry → Scryfall
+     set/collector → exact-name lookup → placeholder.
+   - True DFCs (img_back) get a FLIP control on the thumbnail.
+   - Counts everywhere are COPIES (sum of qty), not tiles.
+   Loads data/sp.json + data/ct.json dated today; CT rows keep
+   their CT badge. Submit posts to the Apps Script endpoint.
    ============================================================ */
 const CONFIG = {
   STORE_NAME: "Geary's Games",
   REPORT_ENDPOINT: "https://script.google.com/macros/s/AKfycbwDnGZHyvulmnxcOw6qif6lPtLD3u8cp0gy7esiiK-F1eMc73gasLxz9-O38cORQCMDqg/exec",
   REPORT_TO: "ryan@gearysgames.com",
   SOURCES: ["data/sp.json", "data/ct.json"],
-  REQUIRE_TODAY: true
+  REQUIRE_TODAY: true,
+  NO_BOX: "No Box"
 };
-
-const COLORS = [
-  {k:"W",label:"White"},{k:"U",label:"Blue"},{k:"B",label:"Black"},
-  {k:"R",label:"Red"},{k:"G",label:"Green"},{k:"M",label:"Multi"},
-  {k:"L",label:"Land"},{k:"BL",label:"Basic Land"},{k:"C",label:"Colorless"}
-];
-/* pull-order tiers within each color (matches the printed sheet) */
-const TIER_NEW  = ["MSC","MAR","MSH"];          // Tier 1 — newest sets
-const TIER_LAST = ["SLD","PLST","LIST"];        // Tier 3 — Secret Lair & The List
-const TIERS = [
-  {t:0, label:"New Sets · MSC / MAR / MSH"},
-  {t:1, label:"All Other Sets"},
-  {t:2, label:"SLD / The List"}
-];
-function tierOf(c){
-  const sc = String(c.setcode||"").toUpperCase();
-  if(TIER_NEW.includes(sc)) return 0;
-  if(TIER_LAST.includes(sc)) return 2;
-  return 1;
-}
-function cnum(c){ return parseInt(String(c.num||"").replace(/\D/g,""),10) || 0; }
-
-/* ---------- BY-BOX mode helpers ---------- */
-const NOBOX = "—";
-let MODE = "color";               // "box" when any card carries a box field
-function boxOf(c){
-  const b = String(c.box||"").trim().toUpperCase();
-  return (!b || b === "-" || b === "UNASSIGNED") ? NOBOX : b;
-}
-/* shelf order: A1 < A2 < … < B1 < … < Z1; "No Box" last */
-function boxKey(b){
-  if(b === NOBOX) return "ZZZ~999";
-  const m = b.match(/^([A-Z]+)\s*(\d*)$/);
-  if(!m) return "ZZ~"+b;
-  return m[1].padStart(3," ") + "~" + String(parseInt(m[2]||"0",10)).padStart(3,"0");
-}
-/* specialty sets file alphabetically by card name inside their box */
-const ALPHA_SETS = ["SLD","SLU","SLC","PLST","ULST","LIST","MB2","CMB1","CMB2"];
-function isAlphaSet(c){ return ALPHA_SETS.includes(String(c.setcode||"").toUpperCase()); }
-const RARITY_NAMES = {N:"Common",U:"Uncommon",R:"Rare",M:"Mythic",S:"Special"};
 
 const $ = s => document.querySelector(s);
 const tabsEl = $("#tabs"), listEl = $("#list"), bannerEl = $("#banner");
 const isFoil = c => String(c.finish||"").toUpperCase().includes("FOIL");
-const qtyOf = c => Math.max(1, parseInt(c.qty,10) || 1);
-let CARDS = [], ST = {}, activeColor = null, sheetDate = null;
-const IMGIDX = {}, CHAINS = {}, DATA_SIG = {};
+let CARDS = [], state = {}, activeBox = null, sheetDate = null;
 
 function todayStr(){
   const d = new Date();
   return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 }
 
-/* ---------- set release years (card "year" field first, Scryfall as fallback) ---------- */
-let SETYEARS = {};
-function yearOf(c){ return c.year || SETYEARS[String(c.setcode||"").toUpperCase()] || ""; }
-/* full release-date sort key (newest-first). Prefer the card's own
-   released_at (YYYY-MM-DD from the generator); fall back to the 4-digit
-   year, then the Scryfall set-year map, so cross-year ordering is always
-   correct even when a source only supplies a year. */
-function relKey(c){
-  const rd = String(c.released_at||"");
-  if(/^\d{4}-\d{2}-\d{2}/.test(rd)) return rd.slice(0,10);
-  const y = yearOf(c);
-  return y ? y+"-00-00" : "0000-00-00";
+function boxOf(c){ return (c.box && String(c.box).trim()) ? String(c.box).trim().toUpperCase() : CONFIG.NO_BOX; }
+function qtyOf(c){ return Math.max(1, parseInt(c.qty,10) || 1); }
+function numKey(n){
+  const m = String(n||"").match(/^(\d+)(.*)$/);
+  return m ? [parseInt(m[1],10), m[2]] : [999999, String(n||"")];
 }
-async function loadSetYears(){
-  try{
-    const cached = JSON.parse(localStorage.getItem("gg_setyears")||"null");
-    if(cached && Date.now()-cached.t < 7*864e5 && cached.m){ SETYEARS = cached.m; return; }
-  }catch(e){}
-  try{
-    let url = "https://api.scryfall.com/sets";
-    const m = {};
-    while(url){
-      const r = await fetch(url); if(!r.ok) break;
-      const j = await r.json();
-      (j.data||[]).forEach(s=>{ if(s.released_at) m[String(s.code).toUpperCase()] = s.released_at.slice(0,4); });
-      url = j.has_more ? j.next_page : null;
-    }
-    if(Object.keys(m).length){ SETYEARS = m;
-      try{ localStorage.setItem("gg_setyears", JSON.stringify({t:Date.now(), m})); }catch(e){} }
-  }catch(e){}
+function shelfSort(a, b){
+  // Z1/specialty: set code then name. Everything else: release date asc, then set, then collector #.
+  const bx = boxOf(a);
+  if(bx === "Z1"){
+    const s = String(a.setcode||a.set||"").localeCompare(String(b.setcode||b.set||""));
+    if(s) return s;
+    return String(a.name||"").localeCompare(String(b.name||""));
+  }
+  const ra = a.released_at || (a.year ? a.year+"-01-01" : "9999-99-99");
+  const rb = b.released_at || (b.year ? b.year+"-01-01" : "9999-99-99");
+  if(ra !== rb) return ra < rb ? -1 : 1;
+  const s = String(a.setcode||a.set||"").localeCompare(String(b.setcode||b.set||""));
+  if(s) return s;
+  const [na, sa] = numKey(a.num), [nb, sb] = numKey(b.num);
+  return na - nb || sa.localeCompare(sb);
 }
 
-/* ---------- image resolution: exact printing first ----------
-   Chain (walked on load error, so an image ALWAYS renders):
-     1. generator CDN product image (CardTrader / ShadowPOS scan)
-     2. img_scry — direct Scryfall image URL published by the generator
-     3. Scryfall by set + collector number (exact printing)
-     4. Scryfall by exact name (any printing — guaranteed to exist)
-   Double-faced cards publish img_back; the FRONT face always shows
-   first, and a Flip button (hover on desktop, always-on for touch)
-   toggles to the back. */
-function scryUrl(sc, n, v, back){
-  return "https://api.scryfall.com/cards/"+sc+"/"+encodeURIComponent(n)+"?format=image&version="+v+(back?"&face=back":"");
-}
-function cleanName(c){
-  return String(c.name||"").split("(")[0].split("//")[0].trim();
-}
-function namedUrl(c, v){
-  return "https://api.scryfall.com/cards/named?exact="+encodeURIComponent(cleanName(c))+"&format=image&version="+v;
-}
-function imgChain(c){
-  const a = [];
-  const named = c.img && /\/cards\/named/.test(c.img);
-  if(c.img && !named) a.push(c.img);                 // generator CDN product image = authoritative
-  if(c.img_scry && c.img_scry !== c.img) a.push(c.img_scry); // direct Scryfall URL from generator
-  if(c.setcode && c.num){                            // pinned by set + collector = exact printing
-    const sc = String(c.setcode).toLowerCase().trim();
-    const raw = String(c.num).trim();
-    const stripped = raw.replace(/^0+(?=.)/,"");
-    a.push(scryUrl(sc, stripped, "small"));
-    if(stripped !== raw) a.push(scryUrl(sc, raw, "small"));
-  }
-  if(named) a.push(c.img);                           // name-only lookup provided by generator
-  a.push(namedUrl(c, "small"));                      // guaranteed last resort: exact-name lookup
-  return a;
-}
-/* back-face source for double-faced cards (front is always the default) */
-function backSrc(c, v){
-  if(c.img_back) return c.img_back;
-  if(c.setcode && c.num){
-    const sc = String(c.setcode).toLowerCase().trim();
-    const n = String(c.num).trim().replace(/^0+(?=.)/,"");
-    return scryUrl(sc, n, v||"normal", true);
-  }
-  return "";
-}
-function isDfc(c){ return !!c.img_back; }
-const FLIP = {};   /* per-card: false = front (default), true = back */
-function zoomSrc(c, back){
-  if(back) return backSrc(c, "large");
-  if(c.setcode && c.num){
-    const sc = String(c.setcode).toLowerCase().trim();
-    const n = String(c.num).trim().replace(/^0+(?=.)/,"");
-    return scryUrl(sc, n, "large");
-  }
-  const ch = CHAINS[c._id]||[]; return ch[Math.min(IMGIDX[c._id]||0, ch.length-1)] || c.img || namedUrl(c,"large");
-}
-/* walk a thumb down its fallback chain on load errors */
-function advanceImg(id, el){
-  const chain = CHAINS[id] || [];
-  const i = (IMGIDX[id]||0) + 1;
-  IMGIDX[id] = i;
-  if(i < chain.length){ el.src = chain[i]; }
-  else { el.onerror = null; el.classList.add("ph"); el.removeAttribute("src"); }
-}
-
-/* ------------------------- data load ------------------------ */
 async function load(){
   const today = todayStr();
   let loaded = [], stale = [], errs = [];
-  const yearsP = loadSetYears();
   await Promise.all(CONFIG.SOURCES.map(async url => {
     try{
       const r = await fetch(url + "?t=" + Date.now(), {cache:"no-store"});
-      if(!r.ok){ DATA_SIG[url] = "http:"+r.status; if(r.status!==404) errs.push(url+" ("+r.status+")"); return; }
+      if(!r.ok){ if(r.status!==404) errs.push(url+" ("+r.status+")"); return; }
       const j = await r.json();
-      DATA_SIG[url] = (j.date||"") + ":" + (j.cards||[]).length;
       if(CONFIG.REQUIRE_TODAY && j.date && j.date !== today){ stale.push((j.source||url)+" @ "+j.date); return; }
       (j.cards||[]).forEach(c => { c.src = c.src || j.source || "?"; CARDS.push(c); });
       loaded.push(j.source || url);
@@ -435,8 +233,7 @@ async function load(){
     }catch(e){ errs.push(url); }
   }));
 
-  CARDS.forEach((c,i)=>{ c._id = i+1; ST[c._id] = {p:0, m:0}; CHAINS[c._id] = imgChain(c); IMGIDX[c._id] = 0; });
-  MODE = CARDS.some(c => boxOf(c) !== NOBOX) ? "box" : "color";
+  CARDS.forEach((c,i)=>{ c._id = i+1; state[c._id] = {p:0, m:0}; });
 
   let notes = [];
   if(stale.length) notes.push("Ignoring stale data: " + stale.join(", "));
@@ -454,245 +251,150 @@ async function load(){
     $("#summary").textContent = "0 cards";
     return;
   }
-  await yearsP;   // set-year map (cached; harmless if it failed)
   render();
 }
 
-/* --------------------- per-copy pull state ------------------
-   Both Pull and Missing are per-copy: each tap marks ONE more copy.
-   p = copies pulled, m = copies missing, always p+m <= qty.
-   A qty>N row therefore needs N Pull taps to fully pull it (mirrors
-   how Missing is tapped one copy at a time). Each button cycles its
-   own counter within the room the other leaves, wrapping back to 0. */
-function pulledOf(c){ return ST[c._id].p; }
-function missingOf(c){ return ST[c._id].m; }
-function doneOf(c){ return pulledOf(c)+missingOf(c); }
-function rowState(c){
-  const q=qtyOf(c), m=missingOf(c), p=pulledOf(c), done=p+m;
-  if(done>=q) return m===0 ? "pulled" : (p===0 ? "missing" : "partial");
-  return (p>0||m>0) ? "partial" : "open";
+function allBoxes(){
+  const set = new Set(CARDS.map(boxOf));
+  const arr = [...set];
+  arr.sort((a,b)=>{
+    if(a === CONFIG.NO_BOX) return 1;
+    if(b === CONFIG.NO_BOX) return -1;
+    return a.localeCompare(b, undefined, {numeric:true});
+  });
+  return arr;
 }
-function pullTap(c){
-  const s=ST[c._id], q=qtyOf(c);
-  if(q===1){ s.p = s.p?0:1; if(s.p) s.m=0; }
-  else { s.p = (s.p+1 > q - s.m) ? 0 : s.p+1; }
-  render();
-}
-function missTap(c){
-  const s=ST[c._id], q=qtyOf(c);
-  if(q===1){ s.m = s.m?0:1; if(s.m) s.p=0; }
-  else { s.m = (s.m+1 > q - s.p) ? 0 : s.m+1; }
-  render();
-}
-
-/* --------------------------- render -------------------------- */
-function cardsFor(k){
-  if(MODE === "box") return CARDS.filter(c => boxOf(c) === k);
-  return CARDS.filter(c => (c.color||"C") === k);
-}
-function copies(cards){ return cards.reduce((n,c)=>n+qtyOf(c),0); }
-function doneCopies(cards){ return cards.reduce((n,c)=>n+doneOf(c),0); }
+function cardsFor(box){ return CARDS.filter(c => boxOf(c) === box).sort(shelfSort); }
+function copies(cards){ return cards.reduce((t,c)=>t+qtyOf(c),0); }
+function doneCopies(cards){ return cards.reduce((t,c)=>t+state[c._id].p+state[c._id].m,0); }
 
 function buildTabs(){
   tabsEl.innerHTML = "";
-  let present;
-  if(MODE === "box"){
-    const boxes = [...new Set(CARDS.map(boxOf))].sort((a,b)=>boxKey(a).localeCompare(boxKey(b)));
-    present = boxes.map(b => ({k:b, label: b===NOBOX ? "No Box" : "Box "+b, box:true}));
-  } else {
-    present = COLORS.filter(c => cardsFor(c.k).length > 0);
-  }
-  present = present.filter(c => cardsFor(c.k).length > 0);
-  if((!activeColor || !present.some(p=>p.k===activeColor)) && present.length) activeColor = present[0].k;
-  present.forEach(c => {
-    const cs = cardsFor(c.k), total = copies(cs), done = doneCopies(cs);
+  const boxes = allBoxes();
+  if(!activeBox || !boxes.includes(activeBox)) activeBox = boxes[0];
+  boxes.forEach(bx => {
+    const cards = cardsFor(bx);
+    const total = copies(cards), done = doneCopies(cards);
     const t = document.createElement("div");
-    t.className = "tab" + (c.k===activeColor?" active":"") + (done===total?" done":"");
-    const pip = c.box
-      ? `<span class="pipbox${c.k===NOBOX?" nb":(/^Z/.test(c.k)?" z":"")}">${c.k===NOBOX?"?":esc(c.k)}</span>`
-      : `<span class="pip c-${c.k}"></span>`;
-    t.innerHTML = `${pip}${esc(c.label)}<span class="cnt">${done}/${total}</span>`;
-    t.onclick = () => { activeColor = c.k; render(); };
+    t.className = "tab" + (bx===activeBox?" active":"") + (done===total?" done":"");
+    t.innerHTML = `<span class="box">${esc(bx)}</span><span class="cnt">${done}/${total}</span>`;
+    t.onclick = () => { activeBox = bx; render(); };
     tabsEl.appendChild(t);
   });
 }
 
 function render(){
   buildTabs();
-  const cards = cardsFor(activeColor);
+  const cards = cardsFor(activeBox);
   listEl.innerHTML = "";
-  if(MODE === "box"){
-    /* physical shelf order: sets chronological (oldest → newest, the way
-       the Fortress boxes are packed), collector number inside each set;
-       specialty sets (Secret Lair / The List / MB) sort by name A–Z */
-    const sorted = [...cards].sort((a,b) =>
-      relKey(a).localeCompare(relKey(b)) ||          // oldest set first
-      String(a.setcode||"").localeCompare(String(b.setcode||"")) ||
-      (isAlphaSet(a)
-        ? String(a.name||"").localeCompare(String(b.name||""))
-        : (cnum(a)-cnum(b))) ||
-      String(a.name||"").localeCompare(String(b.name||"")));
-    sorted.forEach((c,i)=>{ c._pn = i+1; });
-    /* one section per SET, in encounter order */
-    const seen = [];
-    sorted.forEach(c => {
-      const key = String(c.setcode||c.set||"?").toUpperCase();
-      if(!seen.length || seen[seen.length-1].key !== key)
-        seen.push({key, code:c.setcode||"", set:c.set||"", yr:yearOf(c), cards:[]});
-      seen[seen.length-1].cards.push(c);
-    });
-    seen.forEach(g => section(
-      `${g.code?g.code+" · ":""}${g.set}${g.yr?" ("+g.yr+")":""}${isAlphaSet(g.cards[0])?" · A–Z":""}`, g.cards));
-  } else {
-    /* v4 color mode: tier, then newest set first, then collector number */
-    const sorted = [...cards].sort((a,b) =>
-      tierOf(a)-tierOf(b) ||
-      relKey(b).localeCompare(relKey(a)) ||
-      String(a.setcode||"").localeCompare(String(b.setcode||"")) ||
-      cnum(a)-cnum(b) ||
-      String(a.name||"").localeCompare(String(b.name||"")));
-    sorted.forEach((c,i)=>{ c._pn = i+1; });
-    TIERS.forEach(T => {
-      const g = sorted.filter(c => tierOf(c)===T.t);
-      if(g.length) section(T.label, g);
-    });
-  }
+  // Section per set within the box (keeps the shelf-walk obvious)
+  let lastSet = null;
+  cards.forEach(c => {
+    const setKey = (c.setcode||c.set||"?");
+    if(setKey !== lastSet){
+      lastSet = setKey;
+      const h = document.createElement("div");
+      h.className = "grouphdr";
+      const yr = c.year ? ` (${c.year})` : "";
+      h.innerHTML = `<span>${esc(setKey)} — ${esc(c.set||"")}${yr}</span><span class="rule"></span>`;
+      listEl.appendChild(h);
+    }
+    listEl.appendChild(rowEl(c));
+  });
   updateTotals();
 }
 
-function section(title, cards){
-  const h = document.createElement("div");
-  h.className = "grouphdr";
-  h.innerHTML = `<span>${title} — ${copies(cards)}</span><span class="rule"></span>`;
-  listEl.appendChild(h);
-  cards.forEach((c,i) => { const r = rowEl(c); if(i%2) r.classList.add("alt"); listEl.appendChild(r); });
+/* ---- guaranteed image chain ---- */
+function imgChain(c){
+  const chain = [];
+  if(c.img) chain.push(c.img);
+  if(c.img_scry) chain.push(c.img_scry);
+  if(c.setcode && c.num) chain.push("https://api.scryfall.com/cards/"+encodeURIComponent(String(c.setcode).toLowerCase())+"/"+encodeURIComponent(String(c.num))+"?format=image&version=normal");
+  if(c.name) chain.push("https://api.scryfall.com/cards/named?exact="+encodeURIComponent(String(c.name).split("//")[0].trim())+"&format=image&version=normal");
+  return chain;
 }
-
 function thumbHtml(c){
-  const chain = CHAINS[c._id]||[], i = IMGIDX[c._id]||0;
-  const flipped = isDfc(c) && FLIP[c._id];
-  const src = flipped ? backSrc(c, "small") : (i < chain.length ? chain[i] : namedUrl(c,"small"));
-  const flip = isDfc(c) ? `<button class="flipbtn" data-id="${c._id}">Flip</button>` : "";
-  return `<span class="thumbwrap${isDfc(c)?" dfc":""}"><img class="thumb" data-id="${c._id}" src="${esc(src)}" loading="lazy" alt="">${flip}</span>`;
+  const chain = imgChain(c);
+  const flip = c.img_back ? `<button class="flip" data-id="${c._id}">FLIP ⇄</button>` : "";
+  if(!chain.length) return `<div class="thumbwrap"><div class="thumb ph">no img</div></div>`;
+  return `<div class="thumbwrap">
+    <img class="thumb" src="${esc(chain[0])}" loading="lazy"
+      data-chain='${esc(JSON.stringify(chain.slice(1)))}' data-front="1"
+      onerror="window.__imgErr(this)">${flip}</div>`;
 }
-
-function rarityHtml(c){
-  const r = String(c.rarity||"").toUpperCase();
-  if(!RARITY_NAMES[r]) return "";
-  return `<span class="rar r${r}" title="${RARITY_NAMES[r]}">${r}</span>`;
-}
+window.__imgErr = function(el){
+  try{
+    const chain = JSON.parse(el.getAttribute("data-chain")||"[]");
+    if(chain.length){ el.setAttribute("data-chain", JSON.stringify(chain.slice(1))); el.src = chain[0]; return; }
+  }catch(e){}
+  el.classList.add("ph"); el.removeAttribute("src"); el.textContent = "no img";
+};
 
 function rowEl(c){
-  const st = rowState(c), q = qtyOf(c), m = missingOf(c), p = pulledOf(c);
+  const st = state[c._id], q = qtyOf(c);
+  const fullPulled = st.p === q, anyMiss = st.m > 0, resolvedAll = (st.p + st.m) === q;
   const row = document.createElement("div");
-  row.className = "row" + (st!=="open" ? " "+st : "");
+  row.className = "row" + (fullPulled?" pulled":"") + (anyMiss?" missing":"");
   const bits = [];
-  const yr = yearOf(c);
-  if(c.set || c.setcode) bits.push(`${c.setcode?`<span class="sc">${esc(c.setcode)}</span> `:""}<i>${esc(c.set||"")}</i>${yr?` <span class="yr">(${esc(yr)})</span>`:""}`);
-  if(String(c.src).toUpperCase()==="CT") bits.push('<span class="ctbig">CT</span>');
+  if(c.set) bits.push(`<b>${esc((c.setcode?c.setcode+" ":"")+c.set)}</b>` + (c.year?` <span class="yr">(${esc(c.year)})</span>`:""));
   if(c.cond) bits.push(esc(c.cond));
-  const rar = rarityHtml(c); if(rar) bits.push(rar);
-  bits.push("Cart "+esc(c.order||"?"));
-  const prog = (q>1 && (m>0 || p>0))
-    ? `<div class="pm">${p?`<span class="pp">${p} pulled</span>`:""}${p&&m?" · ":""}${m?`<span class="mm">${m} missing</span>`:""}${(p+m<q)?` · ${q-p-m} left`:""}</div>` : "";
-  const pullLabel = q===1 ? (p?"✓ Pulled":"Pull") : (p>=q-m && p>0 ? `✓ Pull ${p}/${q}` : `Pull ${p}/${q}`);
-  const missLabel = q===1 ? (m?"✕ Missing":"Missing") : `Missing ${m}/${q}`;
+  if(c.rarity) bits.push(esc(c.rarity));
+  bits.push("Ord "+esc(c.order||"?"));
+  const pullLbl = q === 1 ? (fullPulled ? "✓ Pulled" : "Pull") : `Pull ${st.p}/${q}`;
+  const missLbl = q === 1 ? "Missing" : `Miss ${st.m}/${q}`;
   row.innerHTML = `
     <div class="body">
       ${thumbHtml(c)}
       <div class="qty">${q}</div>
       <div class="info">
-        <div class="name"><span class="pn">#${c._pn||"?"}</span>${esc(c.name)} <span class="num">#${esc(c.num||"")}</span>${isFoil(c)?'<span class="fo">FOIL</span>':''}</div>
+        <div class="name"><span class="pip c-${esc(c.color||"C")}"></span>${esc(c.name)} <span class="num">#${esc(c.num||"")}</span>${isFoil(c)?'<span class="fo">FOIL</span>':''}</div>
         <div class="meta">${bits.join(" · ")}</div>
-        ${prog}
       </div>
     </div>
     <div class="tag ${esc(c.src)}">${esc(c.src)}</div>
     <div class="actions">
-      <button class="btn pull ${p>0?"on":""}">${pullLabel}</button>
-      <button class="btn miss ${m>0?"on":""}">${missLabel}</button>
+      <button class="btn pull ${fullPulled?"on":(st.p>0?"part":"")}">${pullLbl}</button>
+      <button class="btn miss ${anyMiss?"on":""}">${missLbl}</button>
     </div>`;
-  row.querySelector(".body").onclick = (e) => {
-    if(e.target.closest(".flipbtn")) return;         // handled below
-    const th = e.target.closest(".thumb");
-    if(th){ if(!th.classList.contains("ph")) openZoom(c); return; }
-    pullTap(c);
+  row.querySelector(".body").onclick = () => bump(c._id,"p");
+  row.querySelector(".pull").onclick = e => { e.stopPropagation(); bump(c._id,"p"); };
+  row.querySelector(".miss").onclick = e => { e.stopPropagation(); bump(c._id,"m"); };
+  const flipBtn = row.querySelector(".flip");
+  if(flipBtn) flipBtn.onclick = e => {
+    e.stopPropagation();
+    const img = row.querySelector("img.thumb");
+    if(!img) return;
+    const front = img.getAttribute("data-front") === "1";
+    img.setAttribute("data-front", front ? "0" : "1");
+    img.setAttribute("data-chain","[]");
+    img.src = front ? c.img_back : (imgChain(c)[0] || c.img_back);
   };
-  row.querySelector(".pull").onclick = e => { e.stopPropagation(); pullTap(c); };
-  row.querySelector(".miss").onclick = e => { e.stopPropagation(); missTap(c); };
-  /* image fallback chain + mouse hover preview */
-  const th = row.querySelector("img.thumb");
-  if(th){ th.onerror = () => {
-    if(isDfc(c) && FLIP[c._id]){ FLIP[c._id] = false; th.onerror = null; th.src = (CHAINS[c._id]||[])[IMGIDX[c._id]||0] || namedUrl(c,"small"); }
-    else advanceImg(c._id, th);
-  }; }
-  /* Flip button: toggle front/back on double-faced cards */
-  const fb = row.querySelector(".flipbtn");
-  if(fb && th){
-    fb.onclick = e => {
-      e.stopPropagation();
-      FLIP[c._id] = !FLIP[c._id];
-      th.src = FLIP[c._id] ? backSrc(c, "small")
-        : ((CHAINS[c._id]||[])[Math.min(IMGIDX[c._id]||0,(CHAINS[c._id]||[]).length-1)] || namedUrl(c,"small"));
-      const hi = $("#hoverImg");
-      if($("#hoverPrev").style.display === "block") hi.src = zoomSrc(c, FLIP[c._id]);
-    };
-  }
-  if(th && window.matchMedia("(hover:hover) and (pointer:fine)").matches){
-    th.addEventListener("mouseenter", ev => showHover(c, ev));
-    th.addEventListener("mousemove", ev => moveHover(ev));
-    th.addEventListener("mouseleave", hideHover);
-  }
   return row;
 }
 
-/* ------------------ zoom overlay + hover preview ------------- */
-let zoomCard = null, zoomBack = false;
-function openZoom(c){
-  const ov = $("#zoomOv"), im = $("#zoomImg");
-  zoomCard = c; zoomBack = !!(isDfc(c) && FLIP[c._id]);
-  im.onerror = () => { const ch=CHAINS[c._id]||[]; const cur=ch[Math.min(IMGIDX[c._id]||0,ch.length-1)] || namedUrl(c,"large"); if(cur && im.src!==cur) im.src=cur; };
-  im.src = zoomSrc(c, zoomBack);
-  $("#zoomCap").textContent = c.name + (c.set ? " — " + c.set : "") + (c.num ? "  #" + c.num : "") + (zoomBack ? "  · back" : "");
-  $("#zoomFlip").classList.toggle("show", isDfc(c));
-  ov.classList.add("show");
+/* per-copy bump: increments the tapped state; tapping when that
+   state is maxed resets it (qty-1 rows behave like a toggle). */
+function bump(id, k){
+  const c = CARDS.find(x=>x._id===id), st = state[id], q = qtyOf(c);
+  const other = k === "p" ? "m" : "p";
+  if(st[k] + st[other] >= q){
+    if(st[k] > 0){ st[k] = 0; }            // reset tapped state
+    else { st[other] = 0; st[k] = Math.min(1,q); } // flip a fully-other row
+  } else {
+    st[k]++;
+  }
+  render();
 }
-$("#zoomOv").onclick = () => $("#zoomOv").classList.remove("show");
-$("#zoomFlip").onclick = e => {
-  e.stopPropagation();
-  if(!zoomCard) return;
-  zoomBack = !zoomBack;
-  $("#zoomImg").src = zoomSrc(zoomCard, zoomBack);
-  $("#zoomCap").textContent = zoomCard.name + (zoomCard.set ? " — " + zoomCard.set : "") + (zoomCard.num ? "  #" + zoomCard.num : "") + (zoomBack ? "  · back" : "");
-};
-function showHover(c, ev){
-  const hp = $("#hoverPrev"), im = $("#hoverImg");
-  im.onerror = () => { const ch=CHAINS[c._id]||[]; const cur=ch[Math.min(IMGIDX[c._id]||0,ch.length-1)] || namedUrl(c,"normal"); if(cur && im.src!==cur) im.src=cur; };
-  im.src = zoomSrc(c, isDfc(c) && FLIP[c._id]);
-  hp.style.display = "block";
-  moveHover(ev);
-}
-function moveHover(ev){
-  const hp = $("#hoverPrev");
-  const W = 300, H = 420, pad = 18;
-  let x = ev.clientX + pad, y = Math.min(Math.max(10, ev.clientY - H/2), window.innerHeight - H - 10);
-  if(x + W > window.innerWidth - 10) x = ev.clientX - W - pad;
-  hp.style.left = x + "px"; hp.style.top = y + "px";
-}
-function hideHover(){ $("#hoverPrev").style.display = "none"; }
 
-/* -------------------------- totals --------------------------- */
 function updateTotals(){
   const total = copies(CARDS);
-  const pulled = CARDS.reduce((n,c)=>n+pulledOf(c),0);
-  const missing = CARDS.reduce((n,c)=>n+missingOf(c),0);
+  const pulled = CARDS.reduce((t,c)=>t+state[c._id].p,0);
+  const missing = CARDS.reduce((t,c)=>t+state[c._id].m,0);
   const done = pulled + missing, remaining = total - done;
   $("#ovPulled").textContent = pulled;
   $("#ovMissing").textContent = missing;
   $("#ovTotal").textContent = total;
-  const pct = total ? Math.round(done/total*100) : 0;
-  $("#ovBar").style.width = pct+"%";
-  $("#ovPct").textContent = pct+"%";
+  $("#ovBar").style.width = total ? (done/total*100)+"%" : "0%";
   $("#summary").innerHTML = `<b>${done}</b>/${total} done · <span class="m">${missing} missing</span> · ${remaining} remaining`;
   const btn = $("#submit");
   btn.disabled = done === 0;
@@ -700,27 +402,25 @@ function updateTotals(){
   btn.textContent = remaining>0 ? "Submit (incomplete)" : "Submit Pull Report";
 }
 
-function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m])); }
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m])); }
 
-/* -------------------------- submit --------------------------- */
 $("#submit").onclick = () => {
-  const missRows = CARDS.filter(c=>missingOf(c)>0);
-  const unRows = CARDS.filter(c=>qtyOf(c)-doneOf(c)>0);
-  const missCopies = missRows.reduce((n,c)=>n+missingOf(c),0);
-  const unCopies = unRows.reduce((n,c)=>n+(qtyOf(c)-doneOf(c)),0);
-  $("#mTitle").textContent = missCopies ? `Report ${missCopies} missing card${missCopies>1?"s":""}?` : "No missing cards — submit clean?";
+  const missRows = CARDS.filter(c=>state[c._id].m>0);
+  const openRows = CARDS.filter(c=>(state[c._id].p+state[c._id].m)<qtyOf(c));
+  const missCt = missRows.reduce((t,c)=>t+state[c._id].m,0);
+  $("#mTitle").textContent = missCt ? `Report ${missCt} missing cop${missCt>1?"ies":"y"}?` : "No missing cards — submit clean?";
   let sub = `Emails the report to ${CONFIG.REPORT_TO}.`;
-  if(unCopies) sub += ` ${unCopies} card(s) still unmarked will be listed as NOT PULLED.`;
+  const openCt = openRows.reduce((t,c)=>t+qtyOf(c)-state[c._id].p-state[c._id].m,0);
+  if(openCt) sub += ` ${openCt} cop${openCt>1?"ies":"y"} still unmarked will be listed as NOT PULLED.`;
   $("#mSub").textContent = sub;
   const ml = $("#mList"); ml.innerHTML = "";
-  if(!missRows.length && !unRows.length){ ml.innerHTML = "<div>Everything pulled. Clean report.</div>"; }
+  if(!missRows.length && !openRows.length){ ml.innerHTML = "<div>Everything pulled. Clean report.</div>"; }
   missRows.forEach(c=>{
-    const m=missingOf(c), q=qtyOf(c);
-    ml.innerHTML += `<div>${m===q? m+"×" : m+" of "+q+"×"} ${esc(c.name)} — ${esc(c.set||"")} #${esc(c.num||"")}${isFoil(c)?" (FOIL)":""} · Cart ${esc(c.order||"?")} · <b>MISSING</b></div>`;
+    ml.innerHTML += `<div>${state[c._id].m}× ${esc(c.name)} — ${esc(c.set)} #${esc(c.num||"")}${isFoil(c)?" (FOIL)":""} · ${esc(boxOf(c))} · Ord ${esc(c.order||"?")} · <b>MISSING</b></div>`;
   });
-  unRows.forEach(c=>{
-    const u=qtyOf(c)-doneOf(c), q=qtyOf(c);
-    ml.innerHTML += `<div>${u===q? u+"×" : u+" of "+q+"×"} ${esc(c.name)} — ${esc(c.set||"")} #${esc(c.num||"")}${isFoil(c)?" (FOIL)":""} · Cart ${esc(c.order||"?")} · <b>NOT PULLED</b></div>`;
+  openRows.forEach(c=>{
+    const open = qtyOf(c)-state[c._id].p-state[c._id].m;
+    ml.innerHTML += `<div>${open}× ${esc(c.name)} — ${esc(c.set)} #${esc(c.num||"")}${isFoil(c)?" (FOIL)":""} · ${esc(boxOf(c))} · Ord ${esc(c.order||"?")} · <b>NOT PULLED</b></div>`;
   });
   $("#overlay").classList.add("show");
 };
@@ -728,20 +428,24 @@ $("#mCancel").onclick = () => $("#overlay").classList.remove("show");
 $("#mConfirm").onclick = submitReport;
 
 function buildReport(){
-  const base = c => ({name:c.name,num:c.num,set:c.set,setcode:c.setcode,cond:c.cond,
-    finish:c.finish,order:c.order,src:c.src,color:c.color,box:boxOf(c),qtyOrdered:qtyOf(c)});
-  const missing = [], notPulled = [];
-  let pulled = 0, missCopies = 0, unCopies = 0;
-  CARDS.forEach(c=>{
-    const q=qtyOf(c), m=missingOf(c), p=pulledOf(c), un=q-m-p;
-    pulled += p; missCopies += m; unCopies += un;
-    if(m>0)  missing.push(Object.assign(base(c), {qty:m,  status:"MISSING"}));
-    if(un>0) notPulled.push(Object.assign(base(c), {qty:un, status:"NOT_PULLED"}));
+  const rows = CARDS.map(c=>{
+    const st = state[c._id], q = qtyOf(c);
+    return {
+      name:c.name,num:c.num,set:c.set,setcode:c.setcode,cond:c.cond,finish:c.finish,
+      qty:q,order:c.order,src:c.src,color:c.color,box:boxOf(c),
+      pulledQty:st.p, missingQty:st.m, notPulledQty:q-st.p-st.m,
+      status: st.p===q ? "PULLED" : st.m>0 ? "MISSING" : (st.p>0?"PARTIAL":"NOT_PULLED")
+    };
   });
+  const missing = rows.filter(r=>r.missingQty>0);
+  const notPulled = rows.filter(r=>r.notPulledQty>0);
   return {
     store: CONFIG.STORE_NAME, date: sheetDate || todayStr(),
     submittedAt: new Date().toISOString(), to: CONFIG.REPORT_TO,
-    totals: { total: copies(CARDS), pulled: pulled, missing: missCopies, notPulled: unCopies },
+    totals: { total: rows.reduce((t,r)=>t+r.qty,0),
+              pulled: rows.reduce((t,r)=>t+r.pulledQty,0),
+              missing: rows.reduce((t,r)=>t+r.missingQty,0),
+              notPulled: rows.reduce((t,r)=>t+r.notPulledQty,0) },
     missing, notPulled
   };
 }
@@ -753,42 +457,10 @@ function submitReport(){
   fetch(CONFIG.REPORT_ENDPOINT, {
     method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"},
     body: JSON.stringify(payload)
-  }).then(r=>{ if(r.ok) celebrate();
+  }).then(r=>{ if(r.ok) toast("Report sent to "+CONFIG.REPORT_TO+" ✓");
     else toast("Send failed ("+r.status+"). Try again.", true);
   }).catch(()=>{ toast("Network error — try again.", true);
     console.log("PULL REPORT:", JSON.stringify(payload,null,2)); });
-}
-
-/* ---- celebration: confetti burst, then fade the whole UI to a starry night ---- */
-function celebrate(){
-  runConfetti(2800);
-  setTimeout(() => { $("#doneOv").classList.add("show"); }, 850);
-}
-let confRAF;
-function runConfetti(dur){
-  const cv = $("#confetti"); cv.classList.add("show");
-  const ctx = cv.getContext("2d");
-  const dpr = Math.min(window.devicePixelRatio||1, 2);
-  cv.width = innerWidth*dpr; cv.height = innerHeight*dpr; ctx.scale(dpr,dpr);
-  const W = innerWidth, H = innerHeight;
-  const colors = ["#e8621a","#f4925c","#16a34a","#2ecc71","#3b7cc4","#e8b23a","#c9432f","#ffffff","#8e7bd6"];
-  const P = [];
-  for(let i=0;i<180;i++){
-    P.push({ x:Math.random()*W, y:-20-Math.random()*H*0.6,
-      w:6+Math.random()*8, h:9+Math.random()*11, c:colors[i%colors.length],
-      vy:2.4+Math.random()*4.2, vx:-2.4+Math.random()*4.8,
-      rot:Math.random()*Math.PI, vr:-0.22+Math.random()*0.44 });
-  }
-  const start = performance.now();
-  (function frame(t){
-    const el = t - start;
-    ctx.clearRect(0,0,W,H);
-    P.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; p.vy+=0.06; p.rot+=p.vr;
-      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
-      ctx.fillStyle=p.c; ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h); ctx.restore(); });
-    if(el < dur) confRAF = requestAnimationFrame(frame);
-    else { ctx.clearRect(0,0,W,H); cv.classList.remove("show"); }
-  })(start);
 }
 
 let toastT;
@@ -796,52 +468,6 @@ function toast(msg, err){
   const t=$("#toast"); t.textContent=msg; t.className="toast show"+(err?" err":"");
   clearTimeout(toastT); toastT=setTimeout(()=>t.className="toast",4000);
 }
-
-/* ---- auto-refresh ----
-   1. Hard reload at 4:00 AM daily, and whenever the iPad wakes up on a
-      new day (timers can sleep with the screen).
-   2. MID-DAY PUBLISHES (added 2026-07-17): poll the data files every
-      10 minutes — and on every wake — and compare against what was
-      loaded. If a source changed (e.g. a special CardTrader order was
-      published after the morning load): reload immediately when no pull
-      progress would be lost, otherwise show a tappable banner so staff
-      can refresh when ready. */
-const LOADED_DAY = todayStr();
-function msTo4am(){
-  const n = new Date(), t = new Date(n);
-  t.setHours(4,0,0,0);
-  if(t <= n) t.setDate(t.getDate()+1);
-  return t - n;
-}
-setTimeout(() => location.reload(), msTo4am());
-let updatePromptShown = false;
-async function checkForUpdates(){
-  if(updatePromptShown) return;
-  const sigs = {};
-  await Promise.all(CONFIG.SOURCES.map(async url => {
-    try{
-      const r = await fetch(url + "?t=" + Date.now(), {cache:"no-store"});
-      if(!r.ok){ sigs[url] = "http:"+r.status; return; }
-      const j = await r.json();
-      sigs[url] = (j.date||"") + ":" + (j.cards||[]).length;
-    }catch(e){ sigs[url] = DATA_SIG[url]; } /* network hiccup: no change */
-  }));
-  const changed = CONFIG.SOURCES.some(u => sigs[u] !== undefined && DATA_SIG[u] !== undefined && sigs[u] !== DATA_SIG[u]);
-  if(!changed) return;
-  const progress = CARDS.reduce((n,c)=>n+doneOf(c),0);
-  if(progress === 0){ location.reload(); return; }
-  updatePromptShown = true;
-  bannerEl.innerHTML = "New cards were just published — <b>tap here to refresh</b> (your pull progress will reset)";
-  bannerEl.className = "banner show warn";
-  bannerEl.style.cursor = "pointer";
-  bannerEl.onclick = () => location.reload();
-}
-setInterval(checkForUpdates, 10*60*1000);
-document.addEventListener("visibilitychange", () => {
-  if(document.visibilityState !== "visible") return;
-  if(todayStr() !== LOADED_DAY){ location.reload(); return; }
-  checkForUpdates();   /* same-day wake: catch mid-day publishes */
-});
 
 load();
 </script>
