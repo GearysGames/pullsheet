@@ -235,7 +235,7 @@
 
 <script>
 /* ============================================================
-   Geary's Games — interactive pull sheet  (v5 · 2026-08-01)
+   Geary's Games — interactive pull sheet  (v5.2 · 2026-08-08)
    BY-BOX MODE: when cards carry a "box" field (from the Set →
    Location Index), tabs are physical boxes (A1…A6, Z1…) in shelf
    order, and within a box cards group by SET (chronological, the
@@ -258,6 +258,10 @@
      (hover-reveal on desktop, always visible on touch) toggles the
      back face on the thumbnail, hover preview, and zoom view
    - tap a thumbnail for a large view; mouse hover previews
+   - v5.2 (2026-08-08): collector sort uses the leading number BEFORE
+     any slash in num ("251/303" → 251, "061/332" → 61)
+   - v5.2 (2026-08-08): sets within a box follow the Drive
+     location-index row order (setseq) with released_at fallback
    Loads data/sp.json + data/ct.json (only files dated today),
    merges, renders by color. Submit posts to the Apps Script.
    ============================================================ */
@@ -288,7 +292,10 @@ function tierOf(c){
   if(TIER_LAST.includes(sc)) return 2;
   return 1;
 }
-function cnum(c){ return parseInt(String(c.num||"").replace(/\D/g,""),10) || 0; }
+/* v5.2 fix (2026-08-08): only the integer BEFORE any slash — num can be
+   "430", "061/332" (number/setsize) or "18/143" (List original-set
+   fraction); digits must never concatenate across the slash. */
+function cnum(c){ return parseInt(String(c.num||"").split("/")[0].replace(/\D/g,""),10) || 0; }
 
 /* ---------- BY-BOX mode helpers ---------- */
 const NOBOX = "—";
@@ -378,7 +385,8 @@ function imgChain(c){
   if(c.img_scry && c.img_scry !== c.img) a.push(c.img_scry); // direct Scryfall URL from generator
   if(c.setcode && c.num){                            // pinned by set + collector = exact printing
     const sc = String(c.setcode).toLowerCase().trim();
-    const raw = String(c.num).trim();
+    /* v5.2: collector part is BEFORE any slash ("061/332" → "61") */
+    const raw = String(c.num).split("/")[0].trim();
     const stripped = raw.replace(/^0+(?=.)/,"");
     a.push(scryUrl(sc, stripped, "small"));
     if(stripped !== raw) a.push(scryUrl(sc, raw, "small"));
@@ -392,7 +400,8 @@ function backSrc(c, v){
   if(c.img_back) return c.img_back;
   if(c.setcode && c.num){
     const sc = String(c.setcode).toLowerCase().trim();
-    const n = String(c.num).trim().replace(/^0+(?=.)/,"");
+    /* v5.2: collector part is BEFORE any slash ("061/332" → "61") */
+    const n = String(c.num).split("/")[0].trim().replace(/^0+(?=.)/,"");
     return scryUrl(sc, n, v||"normal", true);
   }
   return "";
@@ -536,15 +545,30 @@ function render(){
        across its cards), not each card's own — variant printings (LTR
        surge-foil lands, released 2023-11 vs the set's 2023-06) were
        splitting one set into two sections inside a box. */
+    /* v5.2 (2026-08-08): the generator now publishes per-card "setseq"
+       (the set's row order in the Drive location index = physical shelf
+       order). Sets WITH a seq come first, ascending by seq (min per
+       set); sets without one keep the v5.1 released_at order after. */
     const setDate = {};
     cards.forEach(c => {
       const k = String(c.setcode||c.set||"?").toUpperCase();
       const d = relKey(c);
       if(!(k in setDate) || d < setDate[k]) setDate[k] = d;
     });
-    const skey = c => setDate[String(c.setcode||c.set||"?").toUpperCase()] || "0000-00-00";
+    const setSeq = {};
+    cards.forEach(c => {
+      const k = String(c.setcode||c.set||"?").toUpperCase();
+      const s = parseFloat(c.setseq);   // NaN for missing/null/"" — never a phantom seq 0
+      if(Number.isFinite(s) && (!(k in setSeq) || s < setSeq[k])) setSeq[k] = s;
+    });
+    const skey = c => {
+      const k = String(c.setcode||c.set||"?").toUpperCase();
+      return (k in setSeq)
+        ? "0~" + String(setSeq[k]).padStart(6,"0")               // location-index row order first
+        : "1~" + (setDate[k] || "0000-00-00");                   // then seqless sets, oldest first
+    };
     const sorted = [...cards].sort((a,b) =>
-      skey(a).localeCompare(skey(b)) ||              // oldest set first
+      skey(a).localeCompare(skey(b)) ||              // setseq order, then oldest set first
       String(a.setcode||"").localeCompare(String(b.setcode||"")) ||
       (isAlphaSet(a)
         ? String(a.name||"").localeCompare(String(b.name||""))
