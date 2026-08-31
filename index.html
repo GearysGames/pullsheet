@@ -235,7 +235,9 @@
 
 <script>
 /* ============================================================
-   Geary's Games — interactive pull sheet  (v5.2 · 2026-08-08)
+   Geary's Games — interactive pull sheet  (v5.3 · 2026-08-31)
+   - v5.3 (2026-08-31): stale-data banner removed; legacy data/ct.json
+     source dropped (CT rides sp.json). Data contract unchanged from v5.2.
    BY-BOX MODE: when cards carry a "box" field (from the Set →
    Location Index), tabs are physical boxes (A1…A6, Z1…) in shelf
    order, and within a box cards group by SET (chronological, the
@@ -269,7 +271,7 @@ const CONFIG = {
   STORE_NAME: "Geary's Games",
   REPORT_ENDPOINT: "https://script.google.com/macros/s/AKfycbwDnGZHyvulmnxcOw6qif6lPtLD3u8cp0gy7esiiK-F1eMc73gasLxz9-O38cORQCMDqg/exec",
   REPORT_TO: "ryan@gearysgames.com",
-  SOURCES: ["data/sp.json", "data/ct.json"],
+  SOURCES: ["data/sp.json"],  /* v5.3: legacy data/ct.json dropped — CT cards ride sp.json with src badges since 2026-08-29 */
   REQUIRE_TODAY: true
 };
 
@@ -455,7 +457,7 @@ async function load(){
   MODE = CARDS.some(c => boxOf(c) !== NOBOX) ? "box" : "color";
 
   let notes = [];
-  if(stale.length) notes.push("Ignoring stale data: " + stale.join(", "));
+  /* v5.3 (2026-08-31): stale-data notice removed per Ryan — stale sources are still skipped, just silently */
   if(errs.length) notes.push("Could not load: " + errs.join(", "));
   if(notes.length){ bannerEl.textContent = notes.join(" · ");
     bannerEl.className = "banner show " + (CARDS.length? "warn":"err"); }
