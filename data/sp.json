@@ -1,8 +1,23 @@
 {
  "source": "SP",
  "date": "2026-09-18",
- "window": "orders slipped 2026-09-18",
+ "window": "orders slipped 2026-09-18 + CardTrader batch 39955983",
  "cards": [
+  {
+   "box": "L1",
+   "color": "C",
+   "name": "Jafar - Striking Illusionist",
+   "num": "42/204",
+   "src": "CT",
+   "set": "Into the Inklands (Set 3)",
+   "cond": "Near Mint",
+   "finish": "NF",
+   "qty": 1,
+   "order": "MKJM",
+   "img": "https://images.shadowpos.com/cdn-cgi/image/width=200,fit=scale-down,quality=80,format=auto/image_3dvq53mfymafjra1jjqx4scfwk.webp",
+   "setcode": "3",
+   "setseq": 5
+  },
   {
    "box": "MTG2",
    "color": "C",
@@ -19,8 +34,8 @@
    "year": "2020",
    "released_at": "2020-11-20",
    "rarity": "uncommon",
-   "setseq": 221,
-   "img_scry": "https://cards.scryfall.io/normal/front/e/e/ee40458c-7f3a-4fa6-976f-be1f7a336fdc.jpg?1783928764"
+   "img_scry": "https://cards.scryfall.io/normal/front/e/e/ee40458c-7f3a-4fa6-976f-be1f7a336fdc.jpg?1783928764",
+   "setseq": 221
   },
   {
    "box": "MTG3",
@@ -38,8 +53,8 @@
    "year": "2023",
    "released_at": "2023-08-04",
    "rarity": "rare",
-   "setseq": 270,
-   "img_scry": "https://cards.scryfall.io/normal/front/9/b/9bd9e634-1d92-4c5e-b371-593f695e48bf.jpg?1783915509"
+   "img_scry": "https://cards.scryfall.io/normal/front/9/b/9bd9e634-1d92-4c5e-b371-593f695e48bf.jpg?1783915509",
+   "setseq": 270
   },
   {
    "box": "MTG4",
@@ -57,8 +72,8 @@
    "year": "2025",
    "released_at": "2025-04-11",
    "rarity": "rare",
-   "setseq": 304,
-   "img_scry": "https://cards.scryfall.io/normal/front/1/f/1f87120f-d2a7-4c06-aadd-3ed5729d7abf.jpg?1783907182"
+   "img_scry": "https://cards.scryfall.io/normal/front/1/f/1f87120f-d2a7-4c06-aadd-3ed5729d7abf.jpg?1783907182",
+   "setseq": 304
   },
   {
    "box": "MTG4",
@@ -76,8 +91,8 @@
    "year": "2025",
    "released_at": "2025-04-11",
    "rarity": "rare",
-   "setseq": 304,
-   "img_scry": "https://cards.scryfall.io/normal/front/b/c/bcaa3213-6fc9-43c7-9819-657e16a578f1.jpg?1783907054"
+   "img_scry": "https://cards.scryfall.io/normal/front/b/c/bcaa3213-6fc9-43c7-9819-657e16a578f1.jpg?1783907054",
+   "setseq": 304
   },
   {
    "box": "MTG5",
@@ -95,8 +110,8 @@
    "year": "2025",
    "released_at": "2025-11-21",
    "rarity": "rare",
-   "setseq": 314,
-   "img_scry": "https://cards.scryfall.io/normal/front/8/d/8da5dab3-4505-40d9-8d81-f653cd77e491.jpg?1783904887"
+   "img_scry": "https://cards.scryfall.io/normal/front/8/d/8da5dab3-4505-40d9-8d81-f653cd77e491.jpg?1783904887",
+   "setseq": 314
   },
   {
    "box": "MTG6",
@@ -114,8 +129,8 @@
    "year": "2026",
    "released_at": "2026-06-26",
    "rarity": "rare",
-   "setseq": 324,
-   "img_scry": "https://cards.scryfall.io/normal/front/0/d/0d855376-c5ff-4981-9605-6c16f213a857.jpg?1783902866"
+   "img_scry": "https://cards.scryfall.io/normal/front/0/d/0d855376-c5ff-4981-9605-6c16f213a857.jpg?1783902866",
+   "setseq": 324
   },
   {
    "box": "MTG7",
@@ -133,8 +148,8 @@
    "year": "2026",
    "released_at": "2026-08-14",
    "rarity": "rare",
-   "setseq": 326,
-   "img_scry": "https://cards.scryfall.io/normal/front/0/d/0de529a7-bdc5-4581-a169-1ad123bc099a.jpg?1785152406"
+   "img_scry": "https://cards.scryfall.io/normal/front/0/d/0de529a7-bdc5-4581-a169-1ad123bc099a.jpg?1785152406",
+   "setseq": 326
   },
   {
    "box": "MTG7",
@@ -152,8 +167,8 @@
    "year": "2026",
    "released_at": "2026-08-14",
    "rarity": "mythic",
-   "setseq": 326,
-   "img_scry": "https://cards.scryfall.io/normal/front/9/5/958f0de2-d209-4e97-9ad4-dedf5da304b8.jpg?1785323372"
+   "img_scry": "https://cards.scryfall.io/normal/front/9/5/958f0de2-d209-4e97-9ad4-dedf5da304b8.jpg?1785323372",
+   "setseq": 326
   },
   {
    "box": "MTG7",
@@ -171,8 +186,8 @@
    "year": "2026",
    "released_at": "2026-08-14",
    "rarity": "rare",
-   "setseq": 326,
-   "img_scry": "https://cards.scryfall.io/normal/front/c/e/ceb193ed-b05f-4820-a17f-e2982bf547ae.jpg?1783902781"
+   "img_scry": "https://cards.scryfall.io/normal/front/c/e/ceb193ed-b05f-4820-a17f-e2982bf547ae.jpg?1783902781",
+   "setseq": 326
   },
   {
    "box": "MTG7",
@@ -190,8 +205,8 @@
    "year": "2026",
    "released_at": "2026-08-14",
    "rarity": "mythic",
-   "setseq": 326,
-   "img_scry": "https://cards.scryfall.io/normal/front/e/f/efc66a6b-8ac7-4cb7-82f1-710fb0e86f82.jpg?1784377103"
+   "img_scry": "https://cards.scryfall.io/normal/front/e/f/efc66a6b-8ac7-4cb7-82f1-710fb0e86f82.jpg?1784377103",
+   "setseq": 326
   },
   {
    "box": "MTG7",
@@ -209,8 +224,203 @@
    "year": "2026",
    "released_at": "2026-08-14",
    "rarity": "rare",
-   "setseq": 326,
-   "img_scry": "https://cards.scryfall.io/normal/front/c/f/cfe91642-7651-4902-8386-b18cfb506925.jpg?1784733948"
+   "img_scry": "https://cards.scryfall.io/normal/front/c/f/cfe91642-7651-4902-8386-b18cfb506925.jpg?1784733948",
+   "setseq": 326
+  },
+  {
+   "box": "OP1",
+   "color": "C",
+   "name": "Sakazuki",
+   "num": "OP16-065",
+   "src": "CT",
+   "set": "The Time of Battle",
+   "cond": "Near Mint",
+   "finish": "FOIL",
+   "qty": 1,
+   "order": "GAPS",
+   "img": "https://images.shadowpos.com/cdn-cgi/image/width=200,fit=scale-down,quality=80,format=auto/image_5905at2fm5bj8vpscxk4kdcw5h",
+   "setcode": "OP16",
+   "setseq": 50
+  },
+  {
+   "box": "P1",
+   "color": "C",
+   "name": "Meowscarada",
+   "num": "015/198",
+   "src": "CT",
+   "set": "Scarlet & Violet",
+   "cond": "Near Mint",
+   "finish": "FOIL",
+   "qty": 1,
+   "order": "RBYP",
+   "img": "https://images.shadowpos.com/cdn-cgi/image/width=200,fit=scale-down,quality=80,format=auto/image_1nwn8ak3jybzjv6sq58n2ry0zd.png",
+   "setcode": "SVI",
+   "setseq": 136
+  },
+  {
+   "box": "P1",
+   "color": "C",
+   "name": "Telepathic Psychic Energy",
+   "num": "088/088",
+   "src": "CT",
+   "set": "Mega Evolution—Perfect Order",
+   "cond": "Near Mint",
+   "finish": "FOIL",
+   "qty": 1,
+   "order": "85A9",
+   "img": "https://images.shadowpos.com/cdn-cgi/image/width=200,fit=scale-down,quality=80,format=auto/image_084z5pqcxja21bxykvgzqcjq3t.webp",
+   "setcode": "POR",
+   "setseq": 166
+  },
+  {
+   "box": "P1",
+   "color": "C",
+   "name": "Metang",
+   "num": "094/086",
+   "src": "CT",
+   "set": "Mega Evolution—Chaos Rising",
+   "cond": "Near Mint",
+   "finish": "FOIL",
+   "qty": 1,
+   "order": "J8SA",
+   "img": "https://images.shadowpos.com/cdn-cgi/image/width=200,fit=scale-down,quality=80,format=auto/image_2bkbadjb3qbt4v2117tr958f9e",
+   "setcode": "CRI",
+   "setseq": 167
+  },
+  {
+   "box": "RB1",
+   "color": "C",
+   "name": "Renata Glasc — Mastermind",
+   "num": "088/221",
+   "src": "CT",
+   "set": "Spiritforged",
+   "cond": "Near Mint",
+   "finish": "FOIL",
+   "qty": 1,
+   "order": "GEPN",
+   "img": "https://images.shadowpos.com/cdn-cgi/image/width=200,fit=scale-down,quality=80,format=auto/image_7ck0r2ad2qandb8aey6pe17gfv.webp",
+   "setcode": "SFD",
+   "setseq": 6
+  },
+  {
+   "box": "RB1",
+   "color": "C",
+   "name": "Downwell",
+   "num": "147/221",
+   "src": "CT",
+   "set": "Spiritforged",
+   "cond": "Near Mint",
+   "finish": "FOIL",
+   "qty": 1,
+   "order": "GEPN",
+   "img": "https://images.shadowpos.com/cdn-cgi/image/width=200,fit=scale-down,quality=80,format=auto/image_5ppe49tnwaatgvczsw3ap03mpf.webp",
+   "setcode": "SFD",
+   "setseq": 6
+  },
+  {
+   "box": "RB1",
+   "color": "C",
+   "name": "Relentless Pursuit",
+   "num": "184/221",
+   "src": "CT",
+   "set": "Spiritforged",
+   "cond": "Near Mint",
+   "finish": "FOIL",
+   "qty": 1,
+   "order": "ZS83",
+   "img": "https://images.shadowpos.com/cdn-cgi/image/width=200,fit=scale-down,quality=80,format=auto/image_6gjcd5s3wfbjebmnq2rnbp91td.webp",
+   "setcode": "SFD",
+   "setseq": 6
+  },
+  {
+   "box": "RB1",
+   "color": "C",
+   "name": "Endless Riches",
+   "num": "022/166",
+   "src": "CT",
+   "set": "Vendetta",
+   "cond": "Near Mint",
+   "finish": "FOIL",
+   "qty": 1,
+   "order": "2FSJ",
+   "img": "https://images.shadowpos.com/cdn-cgi/image/width=200,fit=scale-down,quality=80,format=auto/image_3jn3x7w3rdby58k8k4gb0pznnm.webp",
+   "setcode": "VEN",
+   "setseq": 8
+  },
+  {
+   "box": "RB1",
+   "color": "C",
+   "name": "Ambessa — Respected and Feared",
+   "num": "136/166",
+   "src": "CT",
+   "set": "Vendetta",
+   "cond": "Near Mint",
+   "finish": "FOIL",
+   "qty": 1,
+   "order": "GEPN",
+   "img": "https://images.shadowpos.com/cdn-cgi/image/width=200,fit=scale-down,quality=80,format=auto/image_3wz50mh9qsbf4t6pvxc8z1c1h7.webp",
+   "setcode": "VEN",
+   "setseq": 8
+  },
+  {
+   "box": "RB1",
+   "color": "C",
+   "name": "Shady Spectacles",
+   "num": "137/166",
+   "src": "CT",
+   "set": "Vendetta",
+   "cond": "Near Mint",
+   "finish": "FOIL",
+   "qty": 1,
+   "order": "GEPN",
+   "img": "https://images.shadowpos.com/cdn-cgi/image/width=200,fit=scale-down,quality=80,format=auto/image_6vhr1hrxatbwhb28mvxk6zgb2e.webp",
+   "setcode": "VEN",
+   "setseq": 8
+  },
+  {
+   "box": "YGO1",
+   "color": "C",
+   "name": "Susa Soldier",
+   "num": "LOD-066",
+   "src": "CT",
+   "set": "Legacy of Darkness (LOD)",
+   "cond": "Lightly Played",
+   "finish": "NF",
+   "qty": 1,
+   "order": "3XN6",
+   "img": "https://images.shadowpos.com/cdn-cgi/image/width=200,fit=scale-down,quality=80,format=auto/image_3nwegh2jx9b4jvrj56g2e1fe45",
+   "setcode": "LOD",
+   "setseq": 24
+  },
+  {
+   "box": "YGO1",
+   "color": "C",
+   "name": "Grapha, Dragon Lord of Dark World",
+   "num": "SDGU-EN001",
+   "src": "CT",
+   "set": "Gates of the Underworld Structure Deck (SDGU)",
+   "cond": "Near Mint",
+   "finish": "NF",
+   "qty": 1,
+   "order": "4JA1",
+   "img": "https://images.shadowpos.com/cdn-cgi/image/width=200,fit=scale-down,quality=80,format=auto/image_7367tfd3rcafns3xs69ngepem7",
+   "setcode": "SDGU",
+   "setseq": 416
+  },
+  {
+   "box": "YGO1",
+   "color": "C",
+   "name": "The True Sun God",
+   "num": "MP22-EN275",
+   "src": "CT",
+   "set": "2022 Tin of the Pharaoh's Gods (MP22)",
+   "cond": "Near Mint",
+   "finish": "NF",
+   "qty": 1,
+   "order": "444P",
+   "img": "https://images.shadowpos.com/cdn-cgi/image/width=200,fit=scale-down,quality=80,format=auto/image_3z26857vfmbtfshfgzfq7vk4wy",
+   "setcode": "MP22",
+   "setseq": 907
   },
   {
    "box": "Z1",
@@ -228,8 +438,8 @@
    "year": "2025",
    "released_at": "2025-07-25",
    "rarity": "rare",
-   "setseq": 9001,
-   "img_scry": "https://cards.scryfall.io/normal/front/3/f/3fd8a7bf-c679-470a-8e56-d3f59b7ba488.jpg?1783906078"
+   "img_scry": "https://cards.scryfall.io/normal/front/3/f/3fd8a7bf-c679-470a-8e56-d3f59b7ba488.jpg?1783906078",
+   "setseq": 9001
   },
   {
    "box": "Z1",
@@ -247,8 +457,8 @@
    "year": "2026",
    "released_at": "2026-08-17",
    "rarity": "rare",
-   "setseq": 9001,
-   "img_scry": "https://cards.scryfall.io/normal/front/e/6/e697d90f-3553-4f2e-9b30-b04e6dcd6de4.jpg?1784895393"
+   "img_scry": "https://cards.scryfall.io/normal/front/e/6/e697d90f-3553-4f2e-9b30-b04e6dcd6de4.jpg?1784895393",
+   "setseq": 9001
   },
   {
    "box": "Z1",
@@ -266,8 +476,8 @@
    "year": "2026",
    "released_at": "2026-08-17",
    "rarity": "rare",
-   "setseq": 9001,
-   "img_scry": "https://cards.scryfall.io/normal/front/3/a/3a1e8139-3690-4d4b-80b4-c733b4bbe786.jpg?1786104424"
+   "img_scry": "https://cards.scryfall.io/normal/front/3/a/3a1e8139-3690-4d4b-80b4-c733b4bbe786.jpg?1786104424",
+   "setseq": 9001
   },
   {
    "box": "Z1",
@@ -285,8 +495,208 @@
    "year": "2026",
    "released_at": "2026-07-20",
    "rarity": "rare",
-   "setseq": 9001,
-   "img_scry": "https://cards.scryfall.io/normal/front/c/a/cadcddad-2f37-4a5c-81e4-242a20573952.jpg?1784715301"
+   "img_scry": "https://cards.scryfall.io/normal/front/c/a/cadcddad-2f37-4a5c-81e4-242a20573952.jpg?1784715301",
+   "setseq": 9001
+  },
+  {
+   "box": "UNASSIGNED",
+   "color": "C",
+   "name": "Pikachu",
+   "num": "023/128",
+   "src": "CT",
+   "set": "30th Celebration",
+   "cond": "Near Mint",
+   "finish": "FOIL",
+   "qty": 1,
+   "order": "0NXW",
+   "img": "https://images.shadowpos.com/cdn-cgi/image/width=200,fit=scale-down,quality=80,format=auto/image_6ehbwyy863b22bzfsy7thtq9re",
+   "setcode": "30C",
+   "setseq": 170
+  },
+  {
+   "box": "UNASSIGNED",
+   "color": "C",
+   "name": "Pikachu",
+   "num": "025/128",
+   "src": "CT",
+   "set": "30th Celebration",
+   "cond": "Near Mint",
+   "finish": "FOIL",
+   "qty": 1,
+   "order": "0NXW",
+   "img": "https://images.shadowpos.com/cdn-cgi/image/width=200,fit=scale-down,quality=80,format=auto/image_2s7h0rs05fb4wse28jw4sy32qh",
+   "setcode": "30C",
+   "setseq": 170
+  },
+  {
+   "box": "UNASSIGNED",
+   "color": "C",
+   "name": "Pikachu",
+   "num": "032/128",
+   "src": "CT",
+   "set": "30th Celebration",
+   "cond": "Near Mint",
+   "finish": "FOIL",
+   "qty": 1,
+   "order": "42D4",
+   "img": "https://images.shadowpos.com/cdn-cgi/image/width=200,fit=scale-down,quality=80,format=auto/image_5pa1bm9vwvb9ctd9z6f69e2gv0",
+   "setcode": "30C",
+   "setseq": 170
+  },
+  {
+   "box": "UNASSIGNED",
+   "color": "C",
+   "name": "Pikachu",
+   "num": "036/128",
+   "src": "CT",
+   "set": "30th Celebration",
+   "cond": "Near Mint",
+   "finish": "FOIL",
+   "qty": 1,
+   "order": "9660",
+   "img": "https://images.shadowpos.com/cdn-cgi/image/width=200,fit=scale-down,quality=80,format=auto/image_6j7k4md7twbbmtvprkepv697yd",
+   "setcode": "30C",
+   "setseq": 170
+  },
+  {
+   "box": "UNASSIGNED",
+   "color": "C",
+   "name": "Pikachu",
+   "num": "039/128",
+   "src": "CT",
+   "set": "30th Celebration",
+   "cond": "Near Mint",
+   "finish": "FOIL",
+   "qty": 1,
+   "order": "9660",
+   "img": "https://images.shadowpos.com/cdn-cgi/image/width=200,fit=scale-down,quality=80,format=auto/image_46abagr9syab88gxf34c0j3fan",
+   "setcode": "30C",
+   "setseq": 170
+  },
+  {
+   "box": "UNASSIGNED",
+   "color": "C",
+   "name": "Pikachu",
+   "num": "040/128",
+   "src": "CT",
+   "set": "30th Celebration",
+   "cond": "Near Mint",
+   "finish": "FOIL",
+   "qty": 1,
+   "order": "46FR",
+   "img": "https://images.shadowpos.com/cdn-cgi/image/width=200,fit=scale-down,quality=80,format=auto/image_66d4002pm6b4788g149r3sc2mq",
+   "setcode": "30C",
+   "setseq": 170
+  },
+  {
+   "box": "UNASSIGNED",
+   "color": "C",
+   "name": "Pikachu",
+   "num": "041/128",
+   "src": "CT",
+   "set": "30th Celebration",
+   "cond": "Near Mint",
+   "finish": "FOIL",
+   "qty": 1,
+   "order": "0NXW",
+   "img": "https://images.shadowpos.com/cdn-cgi/image/width=200,fit=scale-down,quality=80,format=auto/image_7q14jjpwhpb0ste76rpdaksnx4",
+   "setcode": "30C",
+   "setseq": 170
+  },
+  {
+   "box": "UNASSIGNED",
+   "color": "C",
+   "name": "Pikachu ex",
+   "num": "053/128",
+   "src": "CT",
+   "set": "30th Celebration",
+   "cond": "Near Mint",
+   "finish": "FOIL",
+   "qty": 1,
+   "order": "0NXW",
+   "img": "https://images.shadowpos.com/cdn-cgi/image/width=200,fit=scale-down,quality=80,format=auto/image_3js0h20zh5bc4v6rd5v98x842z",
+   "setcode": "30C",
+   "setseq": 170
+  },
+  {
+   "box": "UNASSIGNED",
+   "color": "C",
+   "name": "Hisuian Zorua",
+   "num": "145/128",
+   "src": "CT",
+   "set": "30th Celebration",
+   "cond": "Near Mint",
+   "finish": "FOIL",
+   "qty": 1,
+   "order": "PXH9",
+   "img": "https://images.shadowpos.com/cdn-cgi/image/width=200,fit=scale-down,quality=80,format=auto/image_513b7gn12yazav6g4r8esznpvv",
+   "setcode": "30C",
+   "setseq": 170
+  },
+  {
+   "box": "UNASSIGNED",
+   "color": "C",
+   "name": "Basic Water Energy",
+   "num": "011",
+   "src": "CT",
+   "set": "Mega Evolution Energies",
+   "cond": "Near Mint",
+   "finish": "FOIL",
+   "qty": 2,
+   "order": "ZQ8T",
+   "img": "https://images.shadowpos.com/cdn-cgi/image/width=200,fit=scale-down,quality=80,format=auto/image_42dynrgw10bht9fx87thhs2ynp"
+  },
+  {
+   "box": "UNASSIGNED",
+   "color": "C",
+   "name": "Basic Psychic Energy",
+   "num": "013",
+   "src": "CT",
+   "set": "Mega Evolution Energies",
+   "cond": "Near Mint",
+   "finish": "FOIL",
+   "qty": 2,
+   "order": "NW9S",
+   "img": "https://images.shadowpos.com/cdn-cgi/image/width=200,fit=scale-down,quality=80,format=auto/image_49hesbt329b1tbatzs5nr605qf"
+  },
+  {
+   "box": "UNASSIGNED",
+   "color": "C",
+   "name": "Basic Fighting Energy",
+   "num": "014",
+   "src": "CT",
+   "set": "Mega Evolution Energies",
+   "cond": "Near Mint",
+   "finish": "FOIL",
+   "qty": 2,
+   "order": "PXH9",
+   "img": "https://images.shadowpos.com/cdn-cgi/image/width=200,fit=scale-down,quality=80,format=auto/image_39ysx49bnza9atv2ggtqnty5ec"
+  },
+  {
+   "box": "UNASSIGNED",
+   "color": "C",
+   "name": "Basic Darkness Energy",
+   "num": "015",
+   "src": "CT",
+   "set": "Mega Evolution Energies",
+   "cond": "Near Mint",
+   "finish": "FOIL",
+   "qty": 3,
+   "order": "ZQ8T",
+   "img": "https://images.shadowpos.com/cdn-cgi/image/width=200,fit=scale-down,quality=80,format=auto/image_082tgxazsgaaqbr7fm7cn8bsef"
+  },
+  {
+   "box": "UNASSIGNED",
+   "color": "C",
+   "name": "Basic Metal Energy",
+   "num": "016",
+   "src": "CT",
+   "set": "Mega Evolution Energies",
+   "cond": "Near Mint",
+   "finish": "FOIL",
+   "qty": 2,
+   "order": "NW9S",
+   "img": "https://images.shadowpos.com/cdn-cgi/image/width=200,fit=scale-down,quality=80,format=auto/image_1kzbs3q962bnnbdvf07va7v1hc"
   }
  ]
 }
