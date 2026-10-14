@@ -240,7 +240,13 @@
 
 <script>
 /* ============================================================
-   Geary's Games — interactive pull sheet  (v5.4 · 2026-10-14)
+   Geary's Games — interactive pull sheet  (v5.5 · 2026-10-14)
+   - v5.5 (2026-10-14): specialty sets (Secret Lair / The List / MB) now
+     sort by collector number like every other set (Ryan: the specialty
+     box is filed by collector number, one flat run per group). The old
+     card-name A–Z order and its "A–Z" section label are gone. A card
+     with no collector number goes to the BACK of its set, A–Z by name
+     (Ryan: unnumbered List cards sit alphabetically at the back).
    - v5.4 (2026-10-14): order-source call-out (Ryan): every row shows a big
      colored source badge so pulled cards stay separate by destination:
      MP = Mana Pool, CT = a direct CardTrader order (ships with its slip),
@@ -255,7 +261,7 @@
    order, and within a box cards group by SET (chronological, the
    way the Fortress boxes are packed) with collector-number order
    inside each set. Specialty sets (Secret Lair / The List / MB)
-   sort by card name A–Z, matching their alphabetical filing.
+   sort by collector number too (v5.5), matching how that box is filed.
    Cards with no box land in a "No Box" tab at the end.
    If NO card carries a box (old-format data), the page falls back
    to the v4 color grouping automatically.
@@ -310,6 +316,8 @@ function tierOf(c){
    "430", "061/332" (number/setsize) or "18/143" (List original-set
    fraction); digits must never concatenate across the slash. */
 function cnum(c){ return parseInt(String(c.num||"").split("/")[0].replace(/\D/g,""),10) || 0; }
+/* v5.5: true when a card has no collector number at all (no digit before any slash) */
+function noNum(c){ return !/\d/.test(String(c.num||"").split("/")[0]); }
 /* v5.4 (2026-10-14): order sources. srcScheme 2 data publishes MP / CT / WEB / CT ZERO, where CT is a
    DIRECT CardTrader order. Older data used "CT" for CardTrader Zero and "CTD" for direct orders. */
 function normSrc(s, scheme){
@@ -336,9 +344,6 @@ function boxKey(b){
   if(!m) return "ZZ~"+b;
   return m[1].padStart(3," ") + "~" + String(parseInt(m[2]||"0",10)).padStart(3,"0");
 }
-/* specialty sets file alphabetically by card name inside their box */
-const ALPHA_SETS = ["SLD","SLU","SLC","PLST","ULST","LIST","MB2","CMB1","CMB2"];
-function isAlphaSet(c){ return ALPHA_SETS.includes(String(c.setcode||"").toUpperCase()); }
 const RARITY_NAMES = {N:"Common",U:"Uncommon",R:"Rare",M:"Mythic",S:"Special"};
 
 const $ = s => document.querySelector(s);
@@ -565,8 +570,8 @@ function render(){
   listEl.innerHTML = "";
   if(MODE === "box"){
     /* physical shelf order: sets chronological (oldest → newest, the way
-       the Fortress boxes are packed), collector number inside each set;
-       specialty sets (Secret Lair / The List / MB) sort by name A–Z */
+       the Fortress boxes are packed), collector number inside each set,
+       specialty sets (Secret Lair / The List / MB) included since v5.5 */
     /* v5.1 fix (2026-08-07): sort by the SET's date (min released_at
        across its cards), not each card's own — variant printings (LTR
        surge-foil lands, released 2023-11 vs the set's 2023-06) were
@@ -596,9 +601,8 @@ function render(){
     const sorted = [...cards].sort((a,b) =>
       skey(a).localeCompare(skey(b)) ||              // setseq order, then oldest set first
       String(a.setcode||"").localeCompare(String(b.setcode||"")) ||
-      (isAlphaSet(a)
-        ? String(a.name||"").localeCompare(String(b.name||""))
-        : (cnum(a)-cnum(b))) ||
+      (noNum(a)-noNum(b)) ||                         // no collector number = back of the set (v5.5)
+      (cnum(a)-cnum(b)) ||                           // collector number, specialty sets too (v5.5)
       String(a.name||"").localeCompare(String(b.name||"")));
     sorted.forEach((c,i)=>{ c._pn = i+1; });
     /* one section per SET, in encounter order */
@@ -610,7 +614,7 @@ function render(){
       seen[seen.length-1].cards.push(c);
     });
     seen.forEach(g => section(
-      `${g.code?g.code+" · ":""}${g.set}${g.yr?" ("+g.yr+")":""}${isAlphaSet(g.cards[0])?" · A–Z":""}`, g.cards));
+      `${g.code?g.code+" · ":""}${g.set}${g.yr?" ("+g.yr+")":""}`, g.cards));
   } else {
     /* v4 color mode: tier, then newest set first, then collector number */
     const sorted = [...cards].sort((a,b) =>
