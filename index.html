@@ -100,9 +100,14 @@
   .rN{color:#cfd6e4} .rU{color:#a8c0d8} .rR{color:#e5c05a} .rM{color:#ef8352} .rS{color:#c79be0}
   .pm{font-size:12px;font-weight:700;margin-top:2px}
   .pm .pp{color:#7ee59b} .pm .mm{color:#ff9d8f}
-  .tag{flex:0 0 auto;font-size:11px;font-weight:800;letter-spacing:.4px;padding:3px 8px;border-radius:6px;
-    border:1px solid var(--line);color:var(--muted);text-transform:uppercase}
-  .tag.SP,.tag.MP{border-color:#3a5b7d;color:#8fb6dd} .tag.CT{border-color:#7d5b3a;color:#dda98f} .tag.WEB{border-color:#4a4a55;color:#b9bfc7}
+  .tag{flex:0 0 auto;min-width:66px;text-align:center;font-size:15px;font-weight:900;letter-spacing:.6px;padding:8px 10px;border-radius:9px;
+    border:2px solid var(--line);color:var(--muted);text-transform:uppercase;white-space:nowrap}
+  /* v5.4 source badges: MP blue, CT (direct CardTrader) green, WEB slate, CT ZERO orange */
+  .tag.s-MP{background:#1f4f86;border-color:#5b9be0;color:#fff}
+  .tag.s-CT{background:#1d6b3b;border-color:#46c776;color:#fff}
+  .tag.s-WEB{background:#4a5263;border-color:#9aa4b8;color:#fff}
+  .tag.s-CT-ZERO{background:#e8621a;border-color:#ffc39e;color:#1a0d05}
+  @media (max-width: 900px){ .tag{min-width:54px;font-size:13px;padding:7px 8px} }
 
   .actions{flex:0 0 auto;display:flex;gap:10px}
   .btn{min-width:132px;height:var(--tap);border-radius:12px;border:1px solid var(--line);
@@ -235,7 +240,14 @@
 
 <script>
 /* ============================================================
-   Geary's Games — interactive pull sheet  (v5.3 · 2026-08-31)
+   Geary's Games — interactive pull sheet  (v5.4 · 2026-10-14)
+   - v5.4 (2026-10-14): order-source call-out (Ryan): every row shows a big
+     colored source badge so pulled cards stay separate by destination:
+     MP = Mana Pool, CT = a direct CardTrader order (ships with its slip),
+     WEB = webstore, CT ZERO = the weekly CardTrader Zero shipment (its
+     cards go in the CT Zero box). Data with "srcScheme": 2 publishes those
+     four values; older data (CT = Zero, CTD = direct) is mapped on load.
+     The missing / not-pulled list shows the source beside each cart.
    - v5.3 (2026-08-31): stale-data banner removed; legacy data/ct.json
      source dropped (CT rides sp.json). Data contract unchanged from v5.2.
    BY-BOX MODE: when cards carry a "box" field (from the Set →
@@ -298,6 +310,17 @@ function tierOf(c){
    "430", "061/332" (number/setsize) or "18/143" (List original-set
    fraction); digits must never concatenate across the slash. */
 function cnum(c){ return parseInt(String(c.num||"").split("/")[0].replace(/\D/g,""),10) || 0; }
+/* v5.4 (2026-10-14): order sources. srcScheme 2 data publishes MP / CT / WEB / CT ZERO, where CT is a
+   DIRECT CardTrader order. Older data used "CT" for CardTrader Zero and "CTD" for direct orders. */
+function normSrc(s, scheme){
+  s = String(s||"").trim().toUpperCase();
+  if(s === "SP") return "MP";
+  if(scheme >= 2) return (s === "CTZERO" || s === "CT-ZERO" || s === "CT_ZERO") ? "CT ZERO" : s;
+  if(s === "CT") return "CT ZERO";
+  if(s === "CTD") return "CT";
+  return s;
+}
+function srcKey(s){ return String(s||"").toUpperCase().replace(/[^A-Z0-9]+/g,"-"); }
 
 /* ---------- BY-BOX mode helpers ---------- */
 const NOBOX = "—";
@@ -447,7 +470,8 @@ async function load(){
       const j = await r.json();
       DATA_SIG[url] = (j.date||"") + ":" + (j.cards||[]).length;
       if(CONFIG.REQUIRE_TODAY && j.date && j.date !== today){ stale.push((j.source||url)+" @ "+j.date); return; }
-      (j.cards||[]).forEach(c => { c.src = c.src || j.source || "?"; if(c.src === "SP") c.src = "MP"; CARDS.push(c); });
+      const scheme = Number(j.srcScheme) || 1;  /* v5.4: 2 = MP / CT / WEB / CT ZERO */
+      (j.cards||[]).forEach(c => { c.src = normSrc(c.src || j.source || "?", scheme); CARDS.push(c); });
       loaded.push(((j.source==="SP")?"MP":j.source) || url);
       if(j.date) sheetDate = j.date;
     }catch(e){ errs.push(url); }
@@ -633,7 +657,7 @@ function rowEl(c){
   const bits = [];
   const yr = yearOf(c);
   if(c.set || c.setcode) bits.push(`${c.setcode?`<span class="sc">${esc(c.setcode)}</span> `:""}<i>${esc(c.set||"")}</i>${yr?` <span class="yr">(${esc(yr)})</span>`:""}`);
-  if(String(c.src).toUpperCase()==="CT") bits.push('<span class="ctbig">CT</span>');
+  /* v5.4: the source call-out is the big badge beside the Pull button (tag s-MP / s-CT / s-WEB / s-CT-ZERO) */
   if(c.cond) bits.push(esc(c.cond));
   const rar = rarityHtml(c); if(rar) bits.push(rar);
   bits.push("Cart "+esc(c.order||"?"));
@@ -651,7 +675,7 @@ function rowEl(c){
         ${prog}
       </div>
     </div>
-    <div class="tag ${esc(c.src)}">${esc(c.src)}</div>
+    <div class="tag s-${srcKey(c.src)}">${esc(c.src)}</div>
     <div class="actions">
       <button class="btn pull ${p>0?"on":""}">${pullLabel}</button>
       <button class="btn miss ${m>0?"on":""}">${missLabel}</button>
@@ -760,11 +784,11 @@ $("#submit").onclick = () => {
   if(!missRows.length && !unRows.length){ ml.innerHTML = "<div>Everything pulled. Clean report.</div>"; }
   missRows.forEach(c=>{
     const m=missingOf(c), q=qtyOf(c);
-    ml.innerHTML += `<div>${m===q? m+"×" : m+" of "+q+"×"} ${esc(c.name)} — ${esc(c.set||"")} #${esc(c.num||"")}${isFoil(c)?" (FOIL)":""} · Cart ${esc(c.order||"?")} · <b>MISSING</b></div>`;
+    ml.innerHTML += `<div>${m===q? m+"×" : m+" of "+q+"×"} ${esc(c.name)} — ${esc(c.set||"")} #${esc(c.num||"")}${isFoil(c)?" (FOIL)":""} · ${esc(c.src)} Cart ${esc(c.order||"?")} · <b>MISSING</b></div>`;
   });
   unRows.forEach(c=>{
     const u=qtyOf(c)-doneOf(c), q=qtyOf(c);
-    ml.innerHTML += `<div>${u===q? u+"×" : u+" of "+q+"×"} ${esc(c.name)} — ${esc(c.set||"")} #${esc(c.num||"")}${isFoil(c)?" (FOIL)":""} · Cart ${esc(c.order||"?")} · <b>NOT PULLED</b></div>`;
+    ml.innerHTML += `<div>${u===q? u+"×" : u+" of "+q+"×"} ${esc(c.name)} — ${esc(c.set||"")} #${esc(c.num||"")}${isFoil(c)?" (FOIL)":""} · ${esc(c.src)} Cart ${esc(c.order||"?")} · <b>NOT PULLED</b></div>`;
   });
   $("#overlay").classList.add("show");
 };
