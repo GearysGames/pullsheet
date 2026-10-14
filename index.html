@@ -244,7 +244,9 @@
    - v5.5 (2026-10-14): specialty sets (Secret Lair / The List / MB) now
      sort by collector number like every other set (Ryan: the specialty
      box is filed by collector number, one flat run per group). The old
-     card-name A–Z order and its "A–Z" section label are gone.
+     card-name A–Z order and its "A–Z" section label are gone. A card
+     with no collector number goes to the BACK of its set, A–Z by name
+     (Ryan: unnumbered List cards sit alphabetically at the back).
    - v5.4 (2026-10-14): order-source call-out (Ryan): every row shows a big
      colored source badge so pulled cards stay separate by destination:
      MP = Mana Pool, CT = a direct CardTrader order (ships with its slip),
@@ -314,6 +316,8 @@ function tierOf(c){
    "430", "061/332" (number/setsize) or "18/143" (List original-set
    fraction); digits must never concatenate across the slash. */
 function cnum(c){ return parseInt(String(c.num||"").split("/")[0].replace(/\D/g,""),10) || 0; }
+/* v5.5: true when a card has no collector number at all (no digit before any slash) */
+function noNum(c){ return !/\d/.test(String(c.num||"").split("/")[0]); }
 /* v5.4 (2026-10-14): order sources. srcScheme 2 data publishes MP / CT / WEB / CT ZERO, where CT is a
    DIRECT CardTrader order. Older data used "CT" for CardTrader Zero and "CTD" for direct orders. */
 function normSrc(s, scheme){
@@ -597,6 +601,7 @@ function render(){
     const sorted = [...cards].sort((a,b) =>
       skey(a).localeCompare(skey(b)) ||              // setseq order, then oldest set first
       String(a.setcode||"").localeCompare(String(b.setcode||"")) ||
+      (noNum(a)-noNum(b)) ||                         // no collector number = back of the set (v5.5)
       (cnum(a)-cnum(b)) ||                           // collector number, specialty sets too (v5.5)
       String(a.name||"").localeCompare(String(b.name||"")));
     sorted.forEach((c,i)=>{ c._pn = i+1; });
