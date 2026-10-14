@@ -1073,7 +1073,7 @@
    "qty": 2,
    "order": "2DEG, 6WP5",
    "setseq": 114,
-   "img": "https://hq.shadowpos.com/placeholder.png"
+   "img": "https://images.ygoprodeck.com/images/cards_small/76548531.jpg"
   },
   {
    "box": "YGO1",
@@ -1088,7 +1088,7 @@
    "qty": 2,
    "order": "T3BD, 4AWJ",
    "setseq": 114,
-   "img": "https://hq.shadowpos.com/placeholder.png"
+   "img": "https://images.ygoprodeck.com/images/cards_small/36270527.jpg"
   },
   {
    "box": "YGO1",
@@ -1103,7 +1103,7 @@
    "qty": 2,
    "order": "CM3J",
    "setseq": 114,
-   "img": "https://hq.shadowpos.com/placeholder.png"
+   "img": "https://images.ygoprodeck.com/images/cards_small/62542673.jpg"
   },
   {
    "box": "YGO1",
@@ -1118,7 +1118,7 @@
    "qty": 2,
    "order": "MWHC, TNJW",
    "setseq": 114,
-   "img": "https://hq.shadowpos.com/placeholder.png"
+   "img": "https://images.ygoprodeck.com/images/cards_small/16908882.jpg"
   },
   {
    "box": "YGO1",
@@ -1133,7 +1133,7 @@
    "qty": 2,
    "order": "CM3J",
    "setseq": 114,
-   "img": "https://hq.shadowpos.com/placeholder.png"
+   "img": "https://images.ygoprodeck.com/images/cards_small/4663194.jpg"
   },
   {
    "box": "YGO1",
@@ -1148,7 +1148,7 @@
    "qty": 2,
    "order": "TNJW",
    "setseq": 114,
-   "img": "https://hq.shadowpos.com/placeholder.png"
+   "img": "https://images.ygoprodeck.com/images/cards_small/50284408.jpg"
   },
   {
    "box": "YGO1",
@@ -1163,7 +1163,7 @@
    "qty": 4,
    "order": "VA21, 933G",
    "setseq": 114,
-   "img": "https://hq.shadowpos.com/placeholder.png"
+   "img": "https://images.ygoprodeck.com/images/cards_small/13068112.jpg"
   },
   {
    "box": "YGO1",
@@ -1178,19 +1178,21 @@
    "qty": 3,
    "order": "1TCD",
    "setseq": 114,
-   "img": "https://hq.shadowpos.com/placeholder.png"
+   "img": "https://images.ygoprodeck.com/images/cards_small/19491080.jpg"
   },
   {
-   "box": "UNASSIGNED",
+   "box": "OP1",
    "color": "C",
    "name": "Portgas.D.Ace",
    "num": "OP16-001",
    "src": "CT",
    "set": "Set Sail Deck Set",
+   "setcode": "OP16",
    "cond": "Near Mint",
    "finish": "FOIL",
    "qty": 2,
    "order": "RMEY, Z0YX",
+   "setseq": 2,
    "img": "https://images.shadowpos.com/cdn-cgi/image/width=200,fit=scale-down,quality=80,format=auto/image_4p5mnx9j1wa2h8kebeh11jqe7j"
   }
  ]
