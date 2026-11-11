@@ -240,7 +240,9 @@
 
 <script>
 /* ============================================================
-   Geary's Games — interactive pull sheet  (v5.5 · 2026-10-14)
+   Geary's Games — interactive pull sheet  (v5.6 · 2026-11-11)
+   - v5.6 (2026-11-11): switching box tabs jumps the list to the top of
+     that box (Ryan). Re-renders inside one box keep the scroll position.
    - v5.5 (2026-10-14): specialty sets (Secret Lair / The List / MB) now
      sort by collector number like every other set (Ryan: the specialty
      box is filed by collector number, one flat run per group). The old
@@ -351,6 +353,7 @@ const tabsEl = $("#tabs"), listEl = $("#list"), bannerEl = $("#banner");
 const isFoil = c => String(c.finish||"").toUpperCase().includes("FOIL");
 const qtyOf = c => Math.max(1, parseInt(c.qty,10) || 1);
 let CARDS = [], ST = {}, activeColor = null, sheetDate = null;
+let shownBox = null;   // v5.6: box the list was last scrolled for
 const IMGIDX = {}, CHAINS = {}, DATA_SIG = {};
 
 function todayStr(){
@@ -559,7 +562,7 @@ function buildTabs(){
       ? `<span class="pipbox${c.k===NOBOX?" nb":(/^Z/.test(c.k)?" z":"")}">${c.k===NOBOX?"?":esc(c.k)}</span>`
       : `<span class="pip c-${c.k}"></span>`;
     t.innerHTML = `${pip}${esc(c.label)}<span class="cnt">${done}/${total}</span>`;
-    t.onclick = () => { activeColor = c.k; render(); };
+    t.onclick = () => { activeColor = c.k; shownBox = null; render(); };   // v5.6: any tab tap goes to the top
     tabsEl.appendChild(t);
   });
 }
@@ -628,6 +631,13 @@ function render(){
       const g = sorted.filter(c => tierOf(c)===T.t);
       if(g.length) section(T.label, g);
     });
+  }
+  /* v5.6: a new box (tab tap, or buildTabs picking another box) starts at
+     the top; Pull / Missing / flip re-renders keep the scroll position */
+  if(activeColor !== shownBox){
+    shownBox = activeColor;
+    listEl.scrollTop = 0;
+    requestAnimationFrame(() => { if(shownBox === activeColor) listEl.scrollTop = 0; });
   }
   updateTotals();
 }
